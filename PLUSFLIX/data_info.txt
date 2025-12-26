@@ -1,0 +1,89 @@
+Baza danych PLUSFLIX — opis
+🎯 Cel bazy danych
+
+Baza danych PLUSFLIX została zaprojektowana w celu przechowywania informacji o filmach i serialach, ich odcinkach, dostępnych językach, platformach do oglądania, gatunkach oraz ograniczeniach geograficznych.
+Jest zoptymalizowana pod kątem projektu edukacyjnego, umożliwia filtrowanie według języka i platformy oraz łatwe rozszerzanie w przyszłości.
+
+🔹 Podstawowe zasady
+
+Filmy i seriale przechowywane są w jednej tabeli titles.
+
+Serial może mieć wiele odcinków.
+
+Film jest traktowany jako serial z jednym odcinkiem.
+
+Listy wartości (gatunki, zablokowane kraje) przechowywane są w formacie tekstowym, oddzielone przecinkami.
+
+Języki i platformy znajdują się w osobnych tabelach, co umożliwia łatwe filtrowanie.
+
+Platforma zawiera również link do oglądania filmu/serialu.
+
+Odcinki dla seriali przechowywane są w tabeli episodes.
+
+Obrazy przechowywane są jako ścieżka do pliku na urządzeniu lub serwerze, a nie jako BLOB.
+
+🔹 Struktura tabel
+1️⃣ titles — filmy i seriale
+Pole	Typ	Opis
+id	INTEGER PK	Unikalny identyfikator
+name	TEXT	Tytuł filmu lub serialu
+type	TEXT	'film' lub 'series'
+description	TEXT	Opis filmu/serialu
+categories	TEXT	Lista gatunków, oddzielona przecinkami, np. "Action,Drama"
+blocked_countries	TEXT	Lista krajów, w których dostęp jest zablokowany, np. "RU,BY"
+image_path	TEXT	Ścieżka do obrazu
+average_rating	REAL	Średnia ocena filmu/serialu
+
+Uwagi:
+
+Film ma jeden odcinek: episode_number = 1 i name = title.name.
+
+2️⃣ episodes — odcinki seriali
+Pole	Typ	Opis
+id	INTEGER PK	Unikalny identyfikator odcinka
+title_id	INTEGER FK	Odniesienie do titles
+episode_number	INTEGER	Numer odcinka
+name	TEXT	Nazwa odcinka
+3️⃣ languages — dostępne języki
+Pole	Typ	Opis
+id	INTEGER PK	Unikalny identyfikator języka
+name	TEXT UNIQUE	Nazwa języka
+4️⃣ title_languages — powiązanie film ↔ język
+Pole	Typ	Opis
+title_id	INTEGER FK	Odniesienie do titles
+language_id	INTEGER FK	Odniesienie do languages
+
+Uwagi:
+
+Pozwala filtrować filmy według języka.
+
+5️⃣ platforms — platformy oglądania
+Pole	Typ	Opis
+id	INTEGER PK	Unikalny identyfikator platformy
+name	TEXT UNIQUE	Nazwa platformy
+6️⃣ title_platforms — powiązanie film ↔ platforma
+Pole	Typ	Opis
+title_id	INTEGER FK	Odniesienie do titles
+platform_id	INTEGER FK	Odniesienie do platforms
+watch_link	TEXT	Link do oglądania na konkretnej platformie
+
+Uwagi:
+
+Pozwala filtrować filmy według platformy i przechowywać różne linki dla różnych platform.
+
+🔹 Schemat logiczny (uproszczony)
+titles
+ ├─ episodes
+ ├─ title_languages ─ languages
+ └─ title_platforms ─ platforms (+ watch_link)
+
+
+titles — tabela centralna
+
+episodes — wszystkie odcinki seriali (film = 1 odcinek)
+
+languages i title_languages — filtrowanie po językach
+
+platforms i title_platforms — filtrowanie po platformach + linki
+
+categories i blocked_countries — listy w formacie tekstowym

@@ -1,0 +1,475 @@
+PRAGMA foreign_keys = ON;
+
+-- 1. titles
+CREATE TABLE titles (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        type TEXT CHECK(type IN ('film', 'series')) NOT NULL,
+                        description TEXT,
+                        categories TEXT,
+                        blocked_countries TEXT,
+                        image_path TEXT,
+                        average_rating REAL
+);
+
+-- 2. episodes
+CREATE TABLE episodes (
+                          id INTEGER PRIMARY KEY AUTOINCREMENT,
+                          title_id INTEGER NOT NULL,
+                          episode_number INTEGER NOT NULL,
+                          name TEXT NOT NULL,
+                          FOREIGN KEY (title_id) REFERENCES titles(id) ON DELETE CASCADE
+);
+
+-- 3. languages
+CREATE TABLE languages (
+                           id INTEGER PRIMARY KEY AUTOINCREMENT,
+                           name TEXT UNIQUE NOT NULL
+);
+
+-- 4. title_languages
+CREATE TABLE title_languages (
+                                 title_id INTEGER NOT NULL,
+                                 language_id INTEGER NOT NULL,
+                                 PRIMARY KEY (title_id, language_id),
+                                 FOREIGN KEY (title_id) REFERENCES titles(id) ON DELETE CASCADE,
+                                 FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
+);
+
+-- 5. platforms
+CREATE TABLE platforms (
+                           id INTEGER PRIMARY KEY AUTOINCREMENT,
+                           name TEXT UNIQUE NOT NULL
+);
+
+-- 6. title_platforms
+CREATE TABLE title_platforms (
+                                 title_id INTEGER NOT NULL,
+                                 platform_id INTEGER NOT NULL,
+                                 watch_link TEXT,
+                                 PRIMARY KEY (title_id, platform_id),
+                                 FOREIGN KEY (title_id) REFERENCES titles(id) ON DELETE CASCADE,
+                                 FOREIGN KEY (platform_id) REFERENCES platforms(id) ON DELETE CASCADE
+);
+
+INSERT OR IGNORE INTO platforms (name) VALUES
+                                           ('Netflix'),
+                                           ('Apple TV+');
+
+INSERT OR IGNORE INTO languages (name) VALUES
+                                           ('English'),
+                                           ('Italian'),
+                                           ('Spanish'),
+                                           ('French'),
+                                           ('German'),
+                                           ('Japanese'),
+                                           ('Russian'),
+                                           ('Irish'),
+                                           ('Polish');
+
+INSERT INTO titles
+(name, type, description, categories, blocked_countries, image_path, average_rating)
+VALUES
+-- Netflix
+('The Godfather','film',
+ 'Epic story of the Corleone mafia family and the rise of Michael Corleone. A classic film about power, loyalty, and crime.',
+ 'Crime,Drama',NULL,'images/The_Godfather.jpg',4.87),
+('The Shawshank Redemption','film',
+ 'Two imprisoned men form a deep friendship over many years. A story about hope, freedom, and human resilience.',
+ 'Drama',NULL,'images/The_Shawshank_Redemption.jpg',4.93),
+('The Dark Knight','film',
+ 'Batman faces his most dangerous enemy, the Joker. A dark and realistic take on superhero cinema.',
+ 'Action,Crime,Drama',NULL,'images/The_Dark_Knight.jpg',4.76),
+('The Mask','film',
+ 'A shy man discovers a magical mask that transforms him. A wild comedy with cartoon-style action.',
+ 'Comedy,Fantasy',NULL,'images/The_Mask.jpg',3.84),
+('The Lord of the Rings: The Return of the King','film',
+ 'The final battle for Middle-earth begins. An epic conclusion to the legendary trilogy.',
+ 'Fantasy,Adventure,Drama',NULL,'images/The_Lord_of_the_Rings_The_Return_of_the_King.jpg',4.91),
+('Forrest Gump','film',
+ 'The life story of a simple man with a big heart. His journey crosses many key moments of American history.',
+ 'Drama,Romance',NULL,'images/Forrest_Gump.jpg',4.68),
+('Oppenheimer','film',
+ 'The story of the creator of the atomic bomb. A dramatic look at science, power, and responsibility.',
+ 'Biography,Drama,History','JP','images/Oppenheimer.jpg',4.55),
+('The Matrix','film',
+ 'A hacker discovers the true nature of reality. A revolutionary film about freedom and control.',
+ 'Sci-Fi,Action',NULL,'images/The_Matrix.jpg',4.89),
+('Interstellar','film',
+ 'Humanity searches for a new home among the stars. A visually stunning story about time and love.',
+ 'Sci-Fi,Drama,Adventure',NULL,'images/Interstellar.jpg',4.72),
+('Back to the Future','film',
+ 'A teenager travels back in time using a DeLorean. A fun and iconic time-travel adventure.',
+ 'Sci-Fi,Comedy,Adventure',NULL,'images/Back_to_the_Future.jpg',4.31),
+('Napoleon','film',
+ 'The rise and fall of Napoleon Bonaparte. A large-scale historical drama.',
+ 'Biography,Drama,History',NULL,'images/Napoleon.jpg',3.67),
+('F1 The Movie','film',
+ 'A high-speed story from the world of Formula 1. Focuses on rivalry and ambition.',
+ 'Action,Sport,Drama',NULL,'images/F1_The_Movie.jpg',3.94),
+('Your Friends & Neighbors','series',
+ 'A story about relationships and hidden conflicts. Explores modern social dynamics.',
+ 'Drama',NULL,'images/Your_Friends_&_Neighbors.jpg',3.42),
+('The Snoopy Show','series',
+ 'Short stories about Snoopy and the Peanuts gang. A light and family-friendly animated series.',
+ 'Animation,Family,Comedy',NULL,'images/The_Snoopy_Show.jpg',4.05),
+('The Gorge','film',
+ 'Two agents guard a mysterious gorge. A tense mix of science fiction and suspense.',
+ 'Sci-Fi,Thriller',NULL,'images/The_Gorge.jpg',3.88),
+('Wolfwalkers','film',
+ 'A girl befriends a magical wolfwalker. A beautifully animated fantasy tale.',
+ 'Animation,Fantasy,Adventure',NULL,'images/Wolfwalkers.jpg',4.47),
+('Finch','film',
+ 'A man builds a robot to protect his dog. A touching post-apocalyptic story.',
+ 'Sci-Fi,Drama',NULL,'images/Finch.jpg',4.12),
+('Silo','series',
+ 'People live underground believing the surface is deadly. Dark secrets slowly come to light.',
+ 'Sci-Fi,Mystery,Drama',NULL,'images/Silo.jpg',4.26),
+('Invasion','series',
+ 'An alien invasion told from multiple perspectives. Focus on human emotions during catastrophe.',
+ 'Sci-Fi,Drama',NULL,'images/Invasion.jpg',3.51),
+('Murderbot','series',
+ 'A security android gains free will. Dark humor mixed with science fiction.',
+ 'Sci-Fi,Comedy,Drama',NULL,'images/Murderbot.jpg',4.08);
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, name FROM titles WHERE type = 'film';
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, 'Episode 1' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 2, 'Episode 2' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 3, 'Episode 3' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 4, 'Episode 4' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 5, 'Episode 5' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 6, 'Episode 6' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 7, 'Episode 7' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 8, 'Episode 8' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 9, 'Episode 9' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,10, 'Episode 10' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,11, 'Episode 11' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,12, 'Episode 12' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,13, 'Episode 13' FROM titles WHERE name='Your Friends & Neighbors';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,14, 'Episode 14' FROM titles WHERE name='Your Friends & Neighbors';
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, 'Episode 1' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 2, 'Episode 2' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 3, 'Episode 3' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 4, 'Episode 4' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 5, 'Episode 5' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 6, 'Episode 6' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 7, 'Episode 7' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 8, 'Episode 8' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 9, 'Episode 9' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,10, 'Episode 10' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,11, 'Episode 11' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,12, 'Episode 12' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,13, 'Episode 13' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,14, 'Episode 14' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,15, 'Episode 15' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,16, 'Episode 16' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,17, 'Episode 17' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,18, 'Episode 18' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,19, 'Episode 19' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,20, 'Episode 20' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,21, 'Episode 21' FROM titles WHERE name='The Snoopy Show';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,22, 'Episode 22' FROM titles WHERE name='The Snoopy Show';
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, 'Episode 1' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 2, 'Episode 2' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 3, 'Episode 3' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 4, 'Episode 4' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 5, 'Episode 5' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 6, 'Episode 6' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 7, 'Episode 7' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 8, 'Episode 8' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 9, 'Episode 9' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,10, 'Episode 10' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,11, 'Episode 11' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,12, 'Episode 12' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,13, 'Episode 13' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,14, 'Episode 14' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,15, 'Episode 15' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,16, 'Episode 16' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,17, 'Episode 17' FROM titles WHERE name='Silo';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,18, 'Episode 18' FROM titles WHERE name='Silo';
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, 'Episode 1' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 2, 'Episode 2' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 3, 'Episode 3' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 4, 'Episode 4' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 5, 'Episode 5' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 6, 'Episode 6' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 7, 'Episode 7' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 8, 'Episode 8' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 9, 'Episode 9' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,10, 'Episode 10' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,11, 'Episode 11' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,12, 'Episode 12' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,13, 'Episode 13' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,14, 'Episode 14' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,15, 'Episode 15' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,16, 'Episode 16' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,17, 'Episode 17' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,18, 'Episode 18' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,19, 'Episode 19' FROM titles WHERE name='Invasion';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,20, 'Episode 20' FROM titles WHERE name='Invasion';
+
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 1, 'Episode 1' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 2, 'Episode 2' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 3, 'Episode 3' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 4, 'Episode 4' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 5, 'Episode 5' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 6, 'Episode 6' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 7, 'Episode 7' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 8, 'Episode 8' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id, 9, 'Episode 9' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,10, 'Episode 10' FROM titles WHERE name='Murderbot';
+INSERT INTO episodes (title_id, episode_number, name)
+SELECT id,11, 'Episode 11' FROM titles WHERE name='Murderbot';
+
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Godfather'
+  AND l.name IN ('English','Italian','Spanish','French','German');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Shawshank Redemption'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Dark Knight'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Mask'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Lord of the Rings: The Return of the King'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Forrest Gump'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Oppenheimer'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Matrix'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Interstellar'
+  AND l.name IN ('English','Spanish','French','German','Russian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Back to the Future'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Napoleon'
+  AND l.name IN ('English','French','Spanish','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='F1 The Movie'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Your Friends & Neighbors'
+  AND l.name IN ('English');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Snoopy Show'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='The Gorge'
+  AND l.name IN ('English','Spanish','French','German');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Wolfwalkers'
+  AND l.name IN ('English','Irish','Spanish','French','German');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Finch'
+  AND l.name IN ('English','Spanish','French','German','Italian');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Silo'
+  AND l.name IN ('English','Spanish','French','German','Polish');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Invasion'
+  AND l.name IN ('English','Spanish','French','German','Japanese');
+INSERT OR IGNORE INTO title_languages
+SELECT t.id, l.id FROM titles t, languages l
+WHERE t.name='Murderbot'
+  AND l.name IN ('English');
+
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Godfather&jbv=60011152'
+FROM titles t, platforms p
+WHERE t.name='The Godfather' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Shawshank%20Redemption&jbv=70005379'
+FROM titles t, platforms p
+WHERE t.name='The Shawshank Redemption' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Dark%20Knight&jbv=70079583'
+FROM titles t, platforms p
+WHERE t.name='The Dark Knight' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Mask&jbv=70027007'
+FROM titles t, platforms p
+WHERE t.name='The Mask' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Lord%20of%20the%20Rings%3A%20The%20Return%20of%20the%20King&jbv=60004484'
+FROM titles t, platforms p
+WHERE t.name='The Lord of the Rings: The Return of the King' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=Forrest%20Gump&jbv=60000724'
+FROM titles t, platforms p
+WHERE t.name='Forrest Gump' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=oppenheimer&jbv=81602830'
+FROM titles t, platforms p
+WHERE t.name='Oppenheimer' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=The%20Matrix&jbv=20557937'
+FROM titles t, platforms p
+WHERE t.name='The Matrix' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=Interstellar&jbv=70305903'
+FROM titles t, platforms p
+WHERE t.name='Interstellar' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://www.netflix.com/search?q=Back%20to%20the%20Future&jbv=60010110'
+FROM titles t, platforms p
+WHERE t.name='Back to the Future' AND p.name='Netflix';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/movie/napoleon/umc.cmc.25k80oxl3vo69c8rimk8v81s1'
+FROM titles t, platforms p
+WHERE t.name='Napoleon' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/movie/f1-the-movie/umc.cmc.3t6dvnnr87zwd4wmvpdx5came'
+FROM titles t, platforms p
+WHERE t.name='F1 The Movie' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/show/your-friends--neighbors/umc.cmc.74o37kzay0yuuub8iumddjsg'
+FROM titles t, platforms p
+WHERE t.name='Your Friends & Neighbors' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/show/the-snoopy-show/umc.cmc.5iswprrvjjw6ab020a17x4ca3'
+FROM titles t, platforms p
+WHERE t.name='The Snoopy Show' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/movie/the-gorge/umc.cmc.26o403koqo2klixc0jtqy6tmc'
+FROM titles t, platforms p
+WHERE t.name='The Gorge' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/movie/wolfwalkers/umc.cmc.amuoq00hqelfi98j0gvg641x'
+FROM titles t, platforms p
+WHERE t.name='Wolfwalkers' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/movie/finch/umc.cmc.47dkj9f2ho3h8dwxixflz65q5'
+FROM titles t, platforms p
+WHERE t.name='Finch' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/show/silo/umc.cmc.3yksgc857px0k0rqe5zd4jice'
+FROM titles t, platforms p
+WHERE t.name='Silo' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/show/invasion/umc.cmc.70b7z97fv7azfzn5baqnj88p6'
+FROM titles t, platforms p
+WHERE t.name='Invasion' AND p.name='Apple TV+';
+INSERT OR IGNORE INTO title_platforms
+SELECT t.id, p.id, 'https://tv.apple.com/us/show/murderbot/umc.cmc.5owrzntj9v1gpg31wshflud03'
+FROM titles t, platforms p
+WHERE t.name='Murderbot' AND p.name='Apple TV+';
+
+
