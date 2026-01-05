@@ -2,7 +2,7 @@
 
 class Title
 {
-    public static function search($query=null, $category=null, $min_rating=null, $max_rating=null, $platform=null, $type=null)
+    public static function search($query=null, $category=null, $min_rating=null, $max_rating=null, $platform=null, $type=null, $language=null)
     {
         $db = Database::getConnection();
         $sql = "SELECT DISTINCT t.* FROM titles t";
@@ -11,6 +11,11 @@ class Title
         if ($platform) {
             $sql .= " INNER JOIN title_platforms tp ON t.id = tp.title_id
                   INNER JOIN platforms p ON tp.platform_id = p.id";
+        }
+
+        if ($language) {
+            $sql .= " INNER JOIN title_languages tl ON t.id = tl.title_id
+                  INNER JOIN languages l ON tl.language_id = l.id";
         }
 
         $sql .= " WHERE 1=1";
@@ -43,6 +48,11 @@ class Title
         if ($platform) {
             $sql .= " AND p.name = :platform";
             $params[':platform'] = $platform;
+        }
+
+        if ($language) {
+            $sql .= " AND l.name = :language";
+            $params[':language'] = $language;
         }
 
         $stmt = $db->prepare($sql);

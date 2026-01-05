@@ -46,6 +46,17 @@
         <?php endforeach; ?>
     </select>
 
+    <select name="language">
+        <option value="">Wszystkie języki</option>
+        <?php
+        $allLanguages = ['Polish','English', 'Italian', 'Spanish', 'French', 'German', 'Japanese', 'Russian', 'Irish'];
+        foreach ($allLanguages as $l):
+            $selected = (isset($_GET['language']) && $_GET['language']==$l) ? 'selected' : '';
+            ?>
+            <option value="<?= $l ?>" <?= $selected ?>><?= $l ?></option>
+        <?php endforeach; ?>
+    </select>
+
     <input type="number" step="0.1" name="min_rating" placeholder="min ocena" value="<?= htmlspecialchars($_GET['min_rating'] ?? '') ?>">
     <input type="number" step="0.1" name="max_rating" placeholder="max ocena" value="<?= htmlspecialchars($_GET['max_rating'] ?? '') ?>">
 
