@@ -15,7 +15,11 @@ class SearchController
         $language   = $_GET['language'] ?? null;
         $sort       = $_GET['sort'] ?? 'relevance';
 
-        // Walidacja danych i komunikaty (FR-3.1.6)
+        // Walidacja q: запрещаем < > / \ [ ] { } ;  (точка и запятая разрешены)
+        if ($query !== '' && preg_match('/[<>\/\\\\\[\]\{\};]/u', $query)) {
+            $errors[] = 'Pole wyszukiwania zawiera niedozwolone znaki (np. <, >, /).';
+        }
+
         if ($min_rating !== null && $min_rating !== '' && !is_numeric($min_rating)) {
             $errors[] = 'Niepoprawna wartość: min ocena.';
         }
@@ -26,19 +30,27 @@ class SearchController
             $errors[] = 'Min ocena nie może być większa niż max ocena.';
         }
 
-        // Sortowanie wyników (WBS: sortowanie wyników)
-        $allowedSort = ['relevance', 'rating_desc', 'rating_asc', 'name_asc', 'name_desc'];
+        $allowedSort = [
+            'relevance',
+            'rating_desc', 'rating_asc',
+            'name_asc', 'name_desc'
+        ];
         if (!in_array($sort, $allowedSort, true)) {
             $errors[] = 'Niepoprawne sortowanie.';
             $sort = 'relevance';
         }
 
-        // Polecane treści (FR-3.3.1) – Top 5 filmów i Top 5 seriali
-        $top5Films = Title::getTopRatedByType('film', 5);
-        $top5Series = Title::getTopRatedByType('series', 5);
-
         $results = [];
-        if (empty($errors)) {
+        $hasAnyFilter = ($query !== '')
+            || ($category !== null && $category !== '')
+            || ($type !== null && $type !== '')
+            || ($platform !== null && $platform !== '')
+            || ($language !== null && $language !== '')
+            || ($min_rating !== null && $min_rating !== '')
+            || ($max_rating !== null && $max_rating !== '')
+            || ($sort !== 'relevance');
+
+        if (empty($errors) && $hasAnyFilter) {
             $results = Title::search(
                 $query ?: null,
                 $category ?: null,

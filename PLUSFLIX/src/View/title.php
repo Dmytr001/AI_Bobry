@@ -3,7 +3,10 @@ $title = $title ?? null;
 $errors = $errors ?? [];
 $reviews = $reviews ?? [];
 $success = $success ?? null;
-$platforms = $platforms ?? []; // Добавили переменную для платформ
+
+$platforms = $platforms ?? [];
+$languages = $languages ?? [];
+$episodes = $episodes ?? [];
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +19,10 @@ $platforms = $platforms ?? []; // Добавили переменную для �
         .error-box { padding:10px; background:#ffd7d7; border:1px solid #ff9b9b; margin: 10px 0; }
         .success-box { padding:10px; background:#d7ffe1; border:1px solid #7fd69a; margin: 10px 0; }
 
-        /* Стили для новых элементов */
+        .nav a { padding:8px 12px; text-decoration:none; border-radius:4px; display:inline-block; margin-right:8px; }
+        .nav a.home { background:#333; color:#fff; }
+        .nav a.search { background:#555; color:#fff; }
+
         .platform-btn { display: inline-block; padding: 10px 15px; background: #222; color: #fff; text-decoration: none; margin: 5px 5px 5px 0; border-radius: 4px; font-size: 0.9em; }
         .platform-btn:hover { background: #444; }
 
@@ -25,18 +31,19 @@ $platforms = $platforms ?? []; // Добавили переменную для �
 
         .my-review-badge { color: #27ae60; font-weight: bold; display: none; font-size: 0.8em; margin-bottom: 5px; }
 
-        /* Modal Styles */
         #reviewModal { display:none; position:fixed; z-index:100; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); }
         .modal-content { background:#fff; width:90%; max-width:500px; margin: 10% auto; padding:20px; border-radius:8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         textarea { width: 100%; box-sizing: border-box; }
-        input[type="number"] { padding: 8px; }
         .btn-main { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<a href="/">← Wróć</a>
+<div class="nav">
+    <a class="home" href="/">← Polecane</a>
+    <a class="search" href="/search">Wyszukiwarka</a>
+</div>
 
 <?php if (!empty($errors)): ?>
     <div class="error-box">
@@ -50,13 +57,13 @@ $platforms = $platforms ?? []; // Добавили переменную для �
     <div class="success-box"><?= htmlspecialchars($success) ?></div>
 <?php endif; ?>
 
-<?php if (!empty($title['image_path'])): ?>
+<?php if ($title && !empty($title['image_path'])): ?>
     <div class="title-poster" style="margin-bottom: 20px;">
         <img src="/<?= htmlspecialchars($title['image_path']) ?>"
              alt="<?= htmlspecialchars($title['name']) ?>"
-             style="max-width: 300px; height: auto; border-radius: 8px; shadow: 0 4px 8px rgba(0,0,0,0.1);">
+             style="max-width: 300px; height: auto; border-radius: 8px;">
     </div>
-<?php else: ?>
+<?php elseif ($title): ?>
     <div style="width: 300px; height: 450px; background: #eee; display: flex; align-items: center; justify-content: center; border-radius: 8px; margin-bottom: 20px;">
         <span>Brak okładki</span>
     </div>
@@ -65,13 +72,13 @@ $platforms = $platforms ?? []; // Добавили переменную для �
 <?php if ($title): ?>
     <h1><?= htmlspecialchars($title['name']) ?></h1>
     <div>
-        <strong>Тип:</strong> <?= htmlspecialchars($title['type']) ?> |
-        <strong>Рейтинг:</strong> ⭐ <?= htmlspecialchars($title['average_rating']) ?>
+        <strong>Typ:</strong> <?= htmlspecialchars($title['type']) ?> |
+        <strong>Rating:</strong> ⭐ <?= htmlspecialchars($title['average_rating']) ?>
     </div>
     <p><?= htmlspecialchars($title['description']) ?></p>
 
 <?php if (!empty($languages)): ?>
-    <div>
+    <div style="margin-top: 10px;">
         <strong>Dostępne języki:</strong>
         <?php
         $langNames = array_map(fn($l) => htmlspecialchars($l['name']), $languages);
@@ -116,10 +123,10 @@ $platforms = $platforms ?? []; // Добавили переменную для �
     <div id="reviews-container">
         <?php if (!empty($reviews)): ?>
             <?php foreach ($reviews as $r): ?>
-                <div class="review-box" id="rev-<?= $r['id'] ?>" onclick="handleReviewClick(<?= $r['id'] ?>, <?= $r['rating'] ?>)">
-                    <div class="my-review-badge" id="badge-<?= $r['id'] ?>">(Twoja opinia - kliknij, aby edytować)</div>
-                    <div>⭐ <span id="rat-<?= $r['id'] ?>"><?= number_format($r['rating'], 2) ?></span> | <small><?= htmlspecialchars($r['created_at']) ?></small></div>
-                    <p id="cont-<?= $r['id'] ?>" style="margin-top: 10px;"><?= nl2br(htmlspecialchars($r['content'])) ?></p>
+                <div class="review-box" id="rev-<?= (int)$r['id'] ?>" onclick="handleReviewClick(<?= (int)$r['id'] ?>, <?= (int)$r['rating'] ?>)">
+                    <div class="my-review-badge" id="badge-<?= (int)$r['id'] ?>">(Twoja opinia - kliknij, aby edytować)</div>
+                    <div>⭐ <span id="rat-<?= (int)$r['id'] ?>"><?= (int)$r['rating'] ?></span> | <small><?= htmlspecialchars($r['created_at'] ?? '') ?></small></div>
+                    <p id="cont-<?= (int)$r['id'] ?>" style="margin-top: 10px;"><?= nl2br(htmlspecialchars($r['content'])) ?></p>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
@@ -151,23 +158,12 @@ $platforms = $platforms ?? []; // Добавили переменную для �
                 </button>
 
                 <button type="button" onclick="closeModal()" style="padding: 10px;">Anuluj</button>
-
             </form>
         </div>
     </div>
 
     <script>
-        // 1. Обработка LocalStorage после добавления нового отзыва
-        const urlParams = new URLSearchParams(window.location.search);
-        const newId = urlParams.get('new_id');
-        if (newId) {
-            localStorage.setItem('my_review_' + newId, 'true');
-            // Очистка URL от new_id для красоты
-            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?id=" + urlParams.get('id');
-            window.history.replaceState({path: cleanUrl}, '', cleanUrl);
-        }
-
-        // 2. Показ меток "Ваша копия" на основе LocalStorage
+        // Метки "моя opinia" оставляем как у тебя: localStorage по id
         document.querySelectorAll('.review-box').forEach(box => {
             const id = box.id.replace('rev-', '');
             if (localStorage.getItem('my_review_' + id)) {
@@ -176,21 +172,15 @@ $platforms = $platforms ?? []; // Добавили переменную для �
             }
         });
 
-        // 1. Главная функция при клике на отзыв
         function handleReviewClick(id, rating) {
-            // Проверяем LocalStorage
             if (localStorage.getItem('my_review_' + id)) {
-
-                // Первый вопрос пользователю
-                if (confirm("Вы хотите отредактировать или удалить этот отзыв?")) {
+                if (confirm("Chcesz edytować lub usunąć tę opinię?")) {
                     const content = document.getElementById('cont-' + id).innerText;
-                    // Если "Да", открываем модалку с данными и кнопкой удаления
                     openModal(id, rating, content);
                 }
             }
         }
 
-        // 2. Открытие модального окна
         function openModal(id = null, rating = 5, content = '') {
             document.getElementById('field_id').value = id || '';
             document.getElementById('field_rating').value = Math.round(rating);
@@ -200,48 +190,41 @@ $platforms = $platforms ?? []; // Добавили переменную для �
 
             if (id) {
                 document.getElementById('modalTitle').innerText = "Edytuj lub usuń opinię";
-                deleteBtn.style.display = 'inline-block'; // Показываем кнопку удаления
+                deleteBtn.style.display = 'inline-block';
             } else {
                 document.getElementById('modalTitle').innerText = "Dodaj opinię";
-                deleteBtn.style.display = 'none'; // Скрываем, если это новый отзыв
+                deleteBtn.style.display = 'none';
             }
 
             document.getElementById('reviewModal').style.display = 'block';
         }
 
-        // 3. Функция удаления (с дополнительным вопросом)
         function deleteReview() {
             const id = document.getElementById('field_id').value;
+            if (!id) return;
 
-            if (id) {
-                // Второй (уточняющий) вопрос специально для удаления
-                if (confirm("Вы УВЕРЕНЫ, что хотите безвозвратно УДАЛИТЬ этот отзыв?")) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
+            if (confirm("Na pewno usunąć tę opinię?")) {
+                const form = document.createElement('form');
+                form.method = 'POST';
 
-                    // Получаем ID фильма из текущего URL для редиректа
-                    const urlParams = new URLSearchParams(window.location.search);
-                    form.action = '/title?id=' + urlParams.get('id');
+                const urlParams = new URLSearchParams(window.location.search);
+                form.action = '/title?id=' + urlParams.get('id');
 
-                    form.innerHTML = `<input type="hidden" name="delete_id" value="${id}">`;
-                    document.body.appendChild(form);
+                form.innerHTML = `<input type="hidden" name="delete_id" value="${id}">`;
+                document.body.appendChild(form);
 
-                    // Чистим локальное хранилище перед отправкой
-                    localStorage.removeItem('my_review_' + id);
-                    form.submit();
-                }
+                localStorage.removeItem('my_review_' + id);
+                form.submit();
             }
         }
 
         function closeModal() {
             document.getElementById('reviewModal').style.display = 'none';
         }
-        // Закрытие модалки при клике вне её области
+
         window.onclick = function(event) {
             const modal = document.getElementById('reviewModal');
-            if (event.target == modal) {
-                closeModal();
-            }
+            if (event.target === modal) closeModal();
         }
     </script>
 
