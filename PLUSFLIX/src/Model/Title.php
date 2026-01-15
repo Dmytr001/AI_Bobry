@@ -2,7 +2,7 @@
 
 class Title
 {
-    public static function search($query=null, $category=null, $min_rating=null, $max_rating=null, $platform=null, $type=null, $language=null)
+    public static function search($query=null, $category=null, $min_rating=null, $max_rating=null, $platform=null, $type=null, $language=null, $sort='relevance')
     {
         $db = Database::getConnection();
         $sql = "SELECT DISTINCT t.* FROM titles t";
@@ -35,12 +35,12 @@ class Title
             $params[':category'] = "%$category%";
         }
 
-        if ($min_rating) {
+        if ($min_rating !== null && $min_rating !== '') {
             $sql .= " AND t.average_rating >= :min_rating";
             $params[':min_rating'] = $min_rating;
         }
 
-        if ($max_rating) {
+        if ($max_rating !== null && $max_rating !== '') {
             $sql .= " AND t.average_rating <= :max_rating";
             $params[':max_rating'] = $max_rating;
         }
@@ -55,11 +55,56 @@ class Title
             $params[':language'] = $language;
         }
 
+        // Sortowanie wyników (WBS: sortowanie wyników)
+        switch ($sort) {
+            case 'rating_desc':
+                $sql .= " ORDER BY t.average_rating DESC";
+                break;
+            case 'rating_asc':
+                $sql .= " ORDER BY t.average_rating ASC";
+                break;
+            case 'name_asc':
+                $sql .= " ORDER BY t.name ASC";
+                break;
+            case 'name_desc':
+                $sql .= " ORDER BY t.name DESC";
+                break;
+            default:
+                // relevance: без доп. логики ранжирования
+                break;
+        }
+
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function getTopRatedByType($type, $limit = 5)
+    {
+        $db = Database::getConnection();
+
+        $sql = "SELECT t.* FROM titles t
+                WHERE t.type = :type
+                ORDER BY t.average_rating DESC
+                LIMIT :limit";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public static function findById(int $id): ?array
+    {
+        $db = Database::getConnection();
+
+        $stmt = $db->prepare("SELECT * FROM titles WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
 
 }
