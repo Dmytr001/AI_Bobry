@@ -107,4 +107,28 @@ class Title
         return $row ?: null;
     }
 
+    public static function getPlatforms(int $titleId): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT p.name, tp.watch_link FROM platforms p JOIN title_platforms tp ON p.id = tp.platform_id WHERE tp.title_id = :title_id ");
+        $stmt->execute([':title_id' => $titleId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getLanguages(int $titleId): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare("SELECT l.name FROM languages l JOIN title_languages tl ON l.id = tl.language_id WHERE tl.title_id = :title_id");
+        $stmt->execute([':title_id' => $titleId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getEpisodes(int $titleId): array
+    {
+        $db = Database::getConnection();
+        $stmt = $db->prepare(" SELECT episode_number, name  FROM episodes WHERE title_id = :title_id ORDER BY episode_number ASC ");
+        $stmt->execute([':title_id' => $titleId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

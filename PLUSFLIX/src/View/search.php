@@ -10,6 +10,9 @@
         .title { border-bottom: 1px solid #ccc; margin-bottom: 15px; padding-bottom: 10px; }
         .type { font-size: 0.9em; color: #666; }
         .error-box { padding:10px; background:#ffd7d7; border:1px solid #ff9b9b; margin: 10px 0; }
+        /* Новые стили */
+        .title-link { text-decoration: none; color: inherit; display: block; }
+        .title:hover { background-color: #f9f9f9; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -19,26 +22,30 @@
 <?php if (!empty($top5Films)): ?>
     <h2>Polecane filmy (Top 5)</h2>
     <?php foreach ($top5Films as $t): ?>
-        <div class="title">
-            <strong><?= htmlspecialchars($t['name']) ?></strong>
-            <div class="type">
-                <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
+        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link">
+            <div class="title">
+                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <div class="type">
+                    <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
+                </div>
+                <p><?= htmlspecialchars($t['description']) ?></p>
             </div>
-            <p><?= htmlspecialchars($t['description']) ?></p>
-        </div>
+        </a>
     <?php endforeach; ?>
 <?php endif; ?>
 
 <?php if (!empty($top5Series)): ?>
     <h2>Polecane seriale (Top 5)</h2>
     <?php foreach ($top5Series as $t): ?>
-        <div class="title">
-            <strong><?= htmlspecialchars($t['name']) ?></strong>
-            <div class="type">
-                <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
+        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link">
+            <div class="title">
+                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <div class="type">
+                    <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
+                </div>
+                <p><?= htmlspecialchars($t['description']) ?></p>
             </div>
-            <p><?= htmlspecialchars($t['description']) ?></p>
-        </div>
+        </a>
     <?php endforeach; ?>
 <?php endif; ?>
 
@@ -111,13 +118,15 @@
 <?php if (!empty($results)): ?>
     <h2>Wyniki:</h2>
     <?php foreach ($results as $title): ?>
-        <div class="title">
-            <strong><?= htmlspecialchars($title['name']) ?></strong>
-            <div class="type">
-                <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?> | Kategorie: <?= htmlspecialchars($title['categories']) ?>
+        <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link">
+            <div class="title">
+                <strong><?= htmlspecialchars($title['name']) ?></strong>
+                <div class="type">
+                    <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?> | Kategorie: <?= htmlspecialchars($title['categories']) ?>
+                </div>
+                <p><?= htmlspecialchars($title['description']) ?></p>
             </div>
-            <p><?= htmlspecialchars($title['description']) ?></p>
-        </div>
+        </a>
     <?php endforeach; ?>
 <?php else: ?>
     <p>Brak wyników.</p>
