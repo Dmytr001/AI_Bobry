@@ -7,12 +7,15 @@ class TitleController
         $errors = [];
         $success = null;
 
-        // --- ТВОЯ СТАРАЯ ПРОВЕРКА ID ---
+        // Validate title id
         $idRaw = $_GET['id'] ?? null;
         if ($idRaw === null || $idRaw === '' || !ctype_digit((string)$idRaw)) {
             $errors[] = 'Niepoprawne ID tytułu.';
             $title = null;
             $reviews = [];
+            $languages = [];
+            $episodes = [];
+            $platforms = [];
             require __DIR__ . '/../View/title.php';
             return;
         }
@@ -23,65 +26,72 @@ class TitleController
         if (!$title) {
             $errors[] = 'Nie znaleziono tytułu.';
             $reviews = [];
+            $languages = [];
+            $episodes = [];
+            $platforms = [];
             require __DIR__ . '/../View/title.php';
             return;
         }
 
-        // --- ОБНОВЛЕННАЯ ОБРАБОТКА POST (Удаление + Редактирование + Добавление) ---
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            // 1. ПЕРВЫМ ДЕЛОМ: Проверяем запрос на удаление
+            // DELETE
             if (isset($_POST['delete_id'])) {
-                $delId = (int)$_POST['delete_id'];
-                Review::delete($delId);
-                // После удаления сразу уходим на GET, чтобы не сработал код ниже
-                header("Location: /title?id=$titleId&success=deleted");
-                exit;
-            }
-
-            // 2. Сбор данных для добавления или редактирования
-            $ratingRaw = $_POST['rating'] ?? '';
-            $contentRaw = trim($_POST['content'] ?? '');
-            $reviewId = $_POST['review_id'] ?? null; // Если заполнено — мы в режиме редактирования
-
-            // Валидация оценки (целые числа от 1 до 5)
-            $rating = (int)$ratingRaw;
-            if ($rating < 1 || $rating > 5) {
-                $errors[] = 'Ocena musi być liczbą od 1 do 5.';
-            }
-
-            // Валидация текста
-            if ($contentRaw === '') {
-                $errors[] = 'Komentarz nie może być pusty.';
-            } elseif (mb_strlen($contentRaw) > 1000) {
-                $errors[] = 'Komentarz jest za długi (max 1000 znaków).';
-            }
-
-            // 3. Если ошибок нет — сохраняем
-            if (empty($errors)) {
-                if ($reviewId && ctype_digit((string)$reviewId)) {
-                    // РЕДАКТИРОВАНИЕ существующей записи
-                    Review::update((int)$reviewId, $rating, $contentRaw);
-                    header("Location: /title?id=$titleId&success=updated");
-                    exit;
+                if (!ctype_digit((string)$_POST['delete_id'])) {
+                    $errors[] = 'Niepoprawne ID opinii do usunięcia.';
                 } else {
-                    // СОЗДАНИЕ новой записи
+                    Review::delete((int)$_POST['delete_id']);
+                    header("Location: /title?id=$titleId&success=deleted");
+                    exit;
+                }
+            }
+
+            // CREATE / UPDATE
+            if (empty($errors)) {
+                $ratingRaw = $_POST['rating'] ?? '';
+                $contentRaw = trim($_POST['content'] ?? ''); // może być puste
+                $reviewIdRaw = $_POST['review_id'] ?? null;
+
+                // rating 1..5
+                $rating = (int)$ratingRaw;
+                if ($rating < 1 || $rating > 5) {
+                    $errors[] = 'Ocena musi być liczbą od 1 do 5.';
+                }
+
+                // content: optional, but limited
+                if ($contentRaw !== '' && mb_strlen($contentRaw) > 1000) {
+                    $errors[] = 'Komentarz jest za długi (max 1000 znaków).';
+                }
+
+                if (empty($errors)) {
+                    // UPDATE
+                    if ($reviewIdRaw !== null && $reviewIdRaw !== '' && ctype_digit((string)$reviewIdRaw)) {
+                        Review::update((int)$reviewIdRaw, $rating, $contentRaw);
+                        header("Location: /title?id=$titleId&success=updated");
+                        exit;
+                    }
+
+                    // CREATE
                     $newId = Review::create($titleId, $rating, $contentRaw);
-                    // Передаем new_id, чтобы JavaScript во View добавил его в LocalStorage
                     header("Location: /title?id=$titleId&new_id=$newId");
                     exit;
                 }
             }
         }
 
-        // Обработка сообщения об успехе после редиректа
+        // Success messages after redirect
         if (isset($_GET['success'])) {
-            $success = 'Zaktualizowano opinię.';
+            $map = [
+                'updated' => 'Zaktualizowano opinię.',
+                'deleted' => 'Usunięto opinię.',
+                'created' => 'Dodano opinię.'
+            ];
+            $success = $map[$_GET['success']] ?? null;
         }
 
         $languages = Title::getLanguages($titleId);
         $episodes = Title::getEpisodes($titleId);
-        $platforms = Title::getPlatforms($titleId); // Метод, который мы добавили в Title.php
+        $platforms = Title::getPlatforms($titleId);
         $reviews = Review::getByTitleId($titleId);
 
         require __DIR__ . '/../View/title.php';
