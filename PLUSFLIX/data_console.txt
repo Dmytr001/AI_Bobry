@@ -518,3 +518,36 @@ BEGIN
     SET average_rating = (SELECT COALESCE(AVG(rating), 5.0) FROM reviews WHERE title_id = OLD.title_id)
     WHERE id = OLD.title_id;
 END;
+
+
+
+
+
+
+
+-- 1. Триггер при добавлении новой оценки
+CREATE TRIGGER IF NOT EXISTS trg_rating_insert
+    AFTER INSERT ON reviews
+BEGIN
+    UPDATE titles
+    SET average_rating = (SELECT COALESCE(AVG(rating), 5.0) FROM reviews WHERE title_id = NEW.title_id)
+    WHERE id = NEW.title_id;
+END;
+
+-- 2. Триггер при изменении оценки
+CREATE TRIGGER IF NOT EXISTS trg_rating_update
+    AFTER UPDATE ON reviews
+BEGIN
+    UPDATE titles
+    SET average_rating = (SELECT COALESCE(AVG(rating), 5.0) FROM reviews WHERE title_id = NEW.title_id)
+    WHERE id = NEW.title_id;
+END;
+
+-- 3. Триггер при удалении оценки
+CREATE TRIGGER IF NOT EXISTS trg_rating_delete
+    AFTER DELETE ON reviews
+BEGIN
+    UPDATE titles
+    SET average_rating = (SELECT COALESCE(AVG(rating), 5.0) FROM reviews WHERE title_id = OLD.title_id)
+    WHERE id = OLD.title_id;
+END;

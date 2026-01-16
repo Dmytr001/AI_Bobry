@@ -50,7 +50,10 @@ class SearchController
             || ($max_rating !== null && $max_rating !== '')
             || ($sort !== 'relevance');
 
-        if (empty($errors) && $hasAnyFilter) {
+        $results = [];
+
+        if (empty($errors)) {
+            // Всегда показываем результаты, даже если q пустое и фильтры пустые
             $results = Title::search(
                 $query ?: null,
                 $category ?: null,
@@ -62,6 +65,7 @@ class SearchController
                 $sort
             );
         }
+
 
         require __DIR__ . '/../View/search.php';
     }
