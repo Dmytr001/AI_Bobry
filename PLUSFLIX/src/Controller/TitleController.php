@@ -51,9 +51,7 @@ class TitleController
             }
 
             // Валидация текста
-            if ($contentRaw === '') {
-                $errors[] = 'Komentarz nie może być pusty.';
-            } elseif (mb_strlen($contentRaw) > 1000) {
+            if (!empty($contentRaw) && mb_strlen($contentRaw) > 1000) {
                 $errors[] = 'Komentarz jest za długi (max 1000 znaków).';
             }
 

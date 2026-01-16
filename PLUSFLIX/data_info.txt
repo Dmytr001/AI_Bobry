@@ -84,3 +84,11 @@ platforms i title_platforms — filtrowanie po platformach oraz przechowywanie l
 categories i blocked_countries — listy w formacie tekstowym
 
 admins — zarządzanie dostępem administracyjnym do systemu
+
+
+
+окей и псоледний елемент - нам нужно зедать так чтоби оценка в фильме отображала реальную оценку
+
+
+
+сейчас там просто значения а нужно так - каждий раз когда в базу с оценками добовляют удаляют или редактируют оценку то для фильмо к которой косаеться оценка на основе бази оценок нужно пресчитать среднюю оценку (может бить не целой )
