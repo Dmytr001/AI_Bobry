@@ -5,13 +5,8 @@
   <title>Admin – Filmy</title>
 </head>
 <body>
+  <?php $active = 'movies'; require __DIR__ . '/../partials/nav.php'; ?>
   <h1>Filmy (Admin)</h1>
-
-  <p>
-    <a href="/admin">← Panel</a> |
-    <a href="/admin/movies/create">+ Dodaj film</a> |
-    <a href="/admin/logout">Wyloguj</a>
-  </p>
 
   <form method="get" action="/admin/movies" style="margin: 12px 0;">
     <input type="text" name="q" placeholder="Szukaj po tytule..." value="<?= htmlspecialchars($q ?? '') ?>">

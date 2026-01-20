@@ -10,6 +10,8 @@ require_once __DIR__ . '/../src/Controller/HomeController.php';
 require_once __DIR__ . '/../src/Controller/AdminController.php';
 require_once __DIR__ . '/../src/Controller/AdminMovieController.php';
 require_once __DIR__ . '/../src/Controller/AdminReviewController.php';
+require_once __DIR__ . '/../src/Controller/AdminUserController.php';
+
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
@@ -24,7 +26,7 @@ if ($path === '/admin/login' && $method === 'POST') {
     exit;
 }
 
-if ($path === '/admin/logout') {
+if ($path === '/admin/logout' && $method === 'POST') {
     (new AdminController())->logout();
     exit;
 }
@@ -71,6 +73,15 @@ if ($path === '/admin/reviews' && $method === 'GET') {
 
 if ($path === '/admin/reviews/delete' && $method === 'POST') {
     (new AdminReviewController())->delete();
+    exit;
+}
+if ($path === '/admin/admins/create' && $method === 'GET') {
+    (new AdminUserController())->createForm();
+    exit;
+}
+
+if ($path === '/admin/admins/create' && $method === 'POST') {
+    (new AdminUserController())->store();
     exit;
 }
 

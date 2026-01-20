@@ -5,15 +5,9 @@
   <title>Admin – Oceny</title>
 </head>
 <body>
-  <h1>Oceny / Recenzje (Admin)</h1>
+  <?php $active = 'reviews'; require __DIR__ . '/../partials/nav.php'; ?>
 
-  <p>
-    <a href="/admin">← Panel</a> |
-    <a href="/admin/movies">Filmy</a> |
-    <form method="post" action="/admin/logout" style="display:inline;">
-      <button type="submit">Wyloguj</button>
-    </form>
-  </p>
+  <h1>Oceny / Recenzje (Admin)</h1>
 
   <form method="get" action="/admin/reviews" style="margin: 12px 0;">
     <input type="text" name="q" placeholder="Szukaj po treści..." value="<?= htmlspecialchars($q ?? '') ?>">

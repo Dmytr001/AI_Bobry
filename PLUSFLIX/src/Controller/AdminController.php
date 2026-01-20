@@ -70,10 +70,11 @@ class AdminController
     }
 
     public function dashboard(): void
-    {
-        $this->requireAdmin();
-        require __DIR__ . '/../View/admin/dashboard.php';
-    }
+{
+    $this->requireAdmin();
+    header('Location: /admin/movies');
+    exit;
+}
 
     public function logout(): void
     {
