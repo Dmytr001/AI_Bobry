@@ -10,6 +10,7 @@
         a.btn { padding:8px 12px; background:#333; color:#fff; text-decoration:none; border-radius:4px; display:inline-block; }
         a.title-link { text-decoration:none; color:inherit; display:block; }
         .card:hover { background:#f9f9f9; }
+        button.btn { padding:8px 12px; background:#333; color:#fff; border:none; border-radius:4px; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -18,6 +19,22 @@
 
 <p>
     <a class="btn" href="/search">Przejdź do wyszukiwarki</a>
+</p>
+
+<p>
+<?php if (empty($_SESSION['admin_id'])): ?>
+    <a class="btn" href="/admin/login">Zaloguj (admin)</a>
+<?php else: ?>
+    <a class="btn" href="/admin">Panel admina</a>
+
+    <form method="post" action="/admin/logout" style="display:inline;">
+        <button type="submit" class="btn">Wyloguj</button>
+    </form>
+
+    <span style="margin-left:10px; color:#666;">
+        Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
+    </span>
+<?php endif; ?>
 </p>
 
 <?php if (!empty($top5Films)): ?>
