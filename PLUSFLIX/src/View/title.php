@@ -27,6 +27,28 @@ $episodes = $episodes ?? [];
         textarea { width: 100%; box-sizing: border-box; }
         .btn-main { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
         .muted { color:#666; font-style: italic; }
+        .title-header-container {
+            display: flex;
+            align-items: center;
+            gap: 15px; 
+            margin: 20px 0;
+        }
+        .copy-btn {
+            padding: 8px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { 
+            background: #e0e0e0; 
+            border-color: #bbb;
+        }
+        .copy-btn svg { width: 18px; height: 18px; fill: #555; }
     </style>
 </head>
 <body>
@@ -53,7 +75,13 @@ $episodes = $episodes ?? [];
     </div>
 <?php endif; ?>
 
-    <h1><?= htmlspecialchars($title['name']) ?></h1>
+    <div class="title-header-container">
+    <h1 style="margin: 0;"><?= htmlspecialchars($title['name']) ?></h1>
+
+    <button class="copy-btn" onclick="copyMovieLink()" title="Kopiuj link">
+        <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+    </button>
+</div>
     <div>⭐ <?= htmlspecialchars($title['average_rating']) ?> | <?= htmlspecialchars($title['type']) ?></div>
     <p><?= htmlspecialchars($title['description']) ?></p>
 
@@ -223,6 +251,25 @@ $episodes = $episodes ?? [];
         }
     </script>
 <?php endif; ?>
-
+<script>
+function copyMovieLink() {
+    const url = window.location.href;
+    
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const oldInner = btn.innerHTML;
+        
+        btn.innerHTML = '<span style="font-size:14px; color: green;">✓</span>';
+        btn.style.borderColor = "green";
+        
+        setTimeout(() => {
+            btn.innerHTML = oldInner;
+            btn.style.borderColor = "#ccc";
+        }, 1500);
+    }).catch(err => {
+        console.error('Błąd kopiowania: ', err);
+    });
+}
+</script>
 </body>
 </html>
