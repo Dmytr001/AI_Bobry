@@ -50,12 +50,29 @@
 <h1>Wyszukiwarka PLUSFLIX</h1>
 <p><a class="btn" href="/">← Wróć do polecanych</a></p>
 
+<p>
+    <?php if (empty($_SESSION['admin_id'])): ?>
+        <a class="btn" href="/admin/login">Zaloguj (admin)</a>
+    <?php else: ?>
+    <a class="btn" href="/admin">Panel admina</a>
+
+<form method="post" action="/admin/logout" style="display:inline;">
+    <button type="submit" class="btn">Wyloguj</button>
+</form>
+
+<span style="margin-left:10px; color:#666;">
+        Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
+    </span>
+<?php endif; ?>
+</p>
+
 <form method="get" action="/search" id="searchForm" class="search-form">
     <div class="row-top">
         <input class="q" type="text" name="q" placeholder="Nazwa" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
 
         <div class="actions">
             <button type="submit">Szukaj</button>
+            <button type="button" onclick="copyUrl()">Kopiuj link</button>
             <a class="reset" href="/search">Usuń filtry</a>
         </div>
     </div>
@@ -120,6 +137,10 @@
     form.querySelectorAll('.row-filters select, .row-filters input[type="number"]').forEach(el => {
         el.addEventListener('change', () => form.submit());
     });
+
+    function copyUrl() {
+        navigator.clipboard.writeText(window.location.href);
+    }
 </script>
 
 <?php if (!empty($errors)): ?>
