@@ -69,6 +69,7 @@ class Title
             case 'name_desc':
                 $sql .= " ORDER BY t.name DESC";
                 break;
+            
             default:
                 // relevance: без доп. логики ранжирования
                 break;
@@ -80,22 +81,103 @@ class Title
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function getTopRatedByType($type, $limit = 5)
+    public static function getTopRatedByType($type, $limit = 5, $category = null, $sort = 'relevance', $platform = null, $language = null)
+{
+    $db = Database::getConnection();
+
+    $sql = "SELECT DISTINCT t.* FROM titles t";
+
+    if ($platform) {
+        $sql .= " INNER JOIN title_platforms tp ON t.id = tp.title_id
+                  INNER JOIN platforms p ON tp.platform_id = p.id";
+    }
+
+    if ($language) {
+        $sql .= " INNER JOIN title_languages tl ON t.id = tl.title_id
+                  INNER JOIN languages l ON tl.language_id = l.id";
+    }
+
+    $sql .= " WHERE t.type = :type";
+
+    if ($category) {
+        $sql .= " AND t.categories LIKE :category";
+    }
+
+    if ($platform) {
+        $sql .= " AND p.name = :platform";
+    }
+
+    if ($language) {
+        $sql .= " AND l.name = :language";
+    }
+
+    switch ($sort) {
+        case 'rating_desc': $sql .= " ORDER BY t.average_rating DESC"; break;
+        case 'rating_asc':  $sql .= " ORDER BY t.average_rating ASC"; break;
+        case 'name_asc':    $sql .= " ORDER BY t.name ASC"; break;
+        case 'name_desc':   $sql .= " ORDER BY t.name DESC"; break;
+        default:            $sql .= " ORDER BY t.average_rating DESC";
+    }
+
+    $sql .= " LIMIT :limit";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+
+    if ($category) {
+        $stmt->bindValue(':category', '%' . $category . '%', PDO::PARAM_STR);
+    }
+    if ($platform) {
+        $stmt->bindValue(':platform', $platform, PDO::PARAM_STR);
+    }
+    if ($language) {
+        $stmt->bindValue(':language', $language, PDO::PARAM_STR);
+    }
+
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+    public static function getNewest($limit = 5)
     {
         $db = Database::getConnection();
 
-        $sql = "SELECT t.* FROM titles t
-                WHERE t.type = :type
-                ORDER BY t.average_rating DESC
-                LIMIT :limit";
+        $sql = "SELECT * FROM titles 
+            ORDER BY id DESC 
+            LIMIT :limit";
 
         $stmt = $db->prepare($sql);
-        $stmt->bindValue(':type', $type, PDO::PARAM_STR);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function getTrendyWeekly($limit = 5)
+{
+    $db = Database::getConnection();
+
+    $sqlAll = "SELECT id FROM titles";
+    $stmtAll = $db->query($sqlAll);
+    $allIds = $stmtAll->fetchAll(PDO::FETCH_COLUMN);
+
+    if (empty($allIds)) return [];
+
+    $seed = (int)date('Y') + (int)date('W');
+    srand($seed);
+    
+    shuffle($allIds);
+    $randomIds = array_slice($allIds, 0, $limit);
+
+    $idsString = implode(',', array_map('intval', $randomIds));
+    
+    $sql = "SELECT * FROM titles WHERE id IN ($idsString)";
+    $stmt = $db->query($sql);
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
     public static function findById(int $id): ?array
     {
         $db = Database::getConnection();

@@ -50,19 +50,21 @@
 <h1>Wyszukiwarka PLUSFLIX</h1>
 <p><a class="btn" href="/">← Wróć do polecanych</a></p>
 
-<?php if (empty($_SESSION['admin_id'])): ?>
-    <a class="btn" href="/admin/login">Zaloguj (admin)</a>
-<?php else: ?>
+<p>
+    <?php if (empty($_SESSION['admin_id'])): ?>
+        <a class="btn" href="/admin/login">Zaloguj (admin)</a>
+    <?php else: ?>
     <a class="btn" href="/admin">Panel admina</a>
 
-    <form method="post" action="/admin/logout" style="display:inline;">
-        <button type="submit" class="btn">Wyloguj</button>
-    </form>
+<form method="post" action="/admin/logout" style="display:inline;">
+    <button type="submit" class="btn">Wyloguj</button>
+</form>
 
-    <span style="color:#666; font-size: 0.9em;">
-            Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
-        </span>
+<span style="margin-left:10px; color:#666;">
+        Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
+    </span>
 <?php endif; ?>
+</p>
 
 <form method="get" action="/search" id="searchForm" class="search-form">
     <div class="row-top">
