@@ -17,6 +17,8 @@ class HomeController
         $top5Films = Title::getTopRatedByType('film', 5, $catF, $sortF, $platF, $langF);
         $top5Series = Title::getTopRatedByType('series', 5, $catS, $sortS, $platS, $langS);
 
+        $topRatedTitles = Title::getTopRatedGeneral(5);
+
         $newestTitles = Title::getNewest(5);
 
         $trendyTitles = Title::getTrendyWeekly(5);

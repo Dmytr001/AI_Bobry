@@ -139,6 +139,22 @@ class Title
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+    public static function getTopRatedGeneral($limit)
+    {
+        $db = Database::getConnection();
+
+        // Нам нужен максимально простой запрос для производительности
+        $sql = "SELECT * FROM titles 
+            ORDER BY average_rating DESC 
+            LIMIT :limit";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public static function getNewest($limit = 5)
     {
         $db = Database::getConnection();

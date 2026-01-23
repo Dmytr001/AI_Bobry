@@ -183,3 +183,52 @@
 
 </body>
 </html>
+
+
+
+Praca nad 3-my kamieniami milowymi - [ 30.02 ]
+
+
+
+
+
+⁠
+
+Denys
+
+
+
+Tarakhkalo
+
+,
+
+Dmytro
+
+
+
+Terletskyi
+
+,  - Design i stylizacja [ 28.02 ]:
+
+
+
+Dopracowanie designu stron na podstawie makiety w Figmie (z dopuszczalnymi niewielkimi odstępstwach).
+
+
+
+Dmytro Mahaliuk - System ulubionych filmów [ 26.02 ]:
+
+
+
+Proponowana implementacja: Na stronie opisu filmu należy dodać przycisk "Dodaj do ulubionych". Po kliknięciu ID filmu powinno być zapisywane w localStorage. Informacja ta będzie wykorzystywana we wszystkich widokach filmów (w wyszukiwarce, sekcji polecanych oraz na stronie opisu), aby wyświetlać specjalną ikonę przy filmach znajdujących się na liście ulubionych. Ponowne naciśnięcie przycisku dodawania do ulubionych powinno usuwać film z ulubionych (usuwać odpowiednie dane z local storage oraz przeładowywać stronę)
+
+
+
+1 osoba - Rozbudowa panelu administratora [ 26.02 ]:
+
+Funkcjonalność dodawania: Należy usprawnić proces dodawania treści (formularz powinien pozwalać na wypełnienie wszystkich danych od razu lub na stworzenie pustego szkicu, który będzie można edytować później z poziomu listy)
+
+Obsługa obrazów: Zdjęcia nie powinny być dodawane poprzez wpisanie ścieżki. System powinien umożliwiać przesyłanie pliku bezpośrednio do folderu images/, a następnie automatycznie zapisywać poprawną ścieżkę w bazie danych do niego.
+
+Dynamiczne listy (Język, Platforma, Kategorie): Podczas dodawania system powinien podpowiadać istniejące już w bazie opcje (podobnie jak obecnie dla platform i języków). Należy dodać możliwość wpisania nowej wartości, która zostanie automatycznie dodana do bazy danych. Ponieważ kategorie nie mają oddzielnej tabeli, system musi przeskanować wszystkie rekordy w poszukiwaniu unikalnych kategorii, aby wyświetlić podpowiedzi. Nowo dodane kategorie, platformy lub języki muszą automatycznie pojawiać się jako opcje w filtrach wyszukiwarki.
+
