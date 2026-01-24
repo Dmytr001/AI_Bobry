@@ -79,13 +79,13 @@
 
     <div class="row-filters">
         <select name="category">
-            <option value="">Wszystkie kategorie</option>
-            <?php
-            $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Romance','Biography','Thriller','Adventure','Sport','Mystery','History'];
-            foreach ($allCategories as $cat):
-                $selected = (isset($_GET['category']) && $_GET['category']==$cat) ? 'selected' : '';
-                ?>
-                <option value="<?= $cat ?>" <?= $selected ?>><?= $cat ?></option>
+    <option value="">Wszystkie kategorie</option>
+
+    <?php foreach (($allCategories ?? []) as $cat): ?>
+        <?php $selected = (isset($_GET['category']) && $_GET['category'] === $cat) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($cat) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($cat) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 
@@ -96,24 +96,25 @@
         </select>
 
         <select name="platform">
-            <option value="">Wszystkie platformy</option>
-            <?php
-            $allPlatforms = ['Netflix','Apple TV+'];
-            foreach ($allPlatforms as $p):
-                $selected = (isset($_GET['platform']) && $_GET['platform']==$p) ? 'selected' : '';
-                ?>
-                <option value="<?= $p ?>" <?= $selected ?>><?= $p ?></option>
+        <option value="">Wszystkie platformy</option>
+
+        <?php foreach (($allPlatforms ?? []) as $p): ?>
+            <?php $selected = (isset($_GET['platform']) && $_GET['platform'] === $p) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($p) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($p) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 
+
         <select name="language">
-            <option value="">Wszystkie języki</option>
-            <?php
-            $allLanguages = ['Polish','English', 'Italian', 'Spanish', 'French', 'German', 'Japanese', 'Russian', 'Irish'];
-            foreach ($allLanguages as $l):
-                $selected = (isset($_GET['language']) && $_GET['language']==$l) ? 'selected' : '';
-                ?>
-                <option value="<?= $l ?>" <?= $selected ?>><?= $l ?></option>
+        <option value="">Wszystkie języki</option>
+
+            <?php foreach (($allLanguages ?? []) as $l): ?>
+                <?php $selected = (isset($_GET['language']) && $_GET['language'] === $l) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($l) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($l) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 

@@ -17,6 +17,25 @@ class AdminMovieController
         }
     }
 
+    private function getAllCategories(PDO $pdo): array
+    {
+        $rows = $pdo->query("SELECT categories FROM titles WHERE categories IS NOT NULL AND TRIM(categories) <> ''")
+                ->fetchAll(PDO::FETCH_ASSOC);
+
+        $set = [];
+        foreach ($rows as $r) {
+            foreach (preg_split('/,/', (string)$r['categories']) as $c) {
+                $c = trim($c);
+                if ($c === '') continue;
+                $set[$c] = true;
+        }
+    }
+
+        $cats = array_keys($set);
+        sort($cats, SORT_NATURAL | SORT_FLAG_CASE);
+        return $cats;
+    }
+
     public function index(): void
     {
         $this->requireAdmin();
@@ -54,6 +73,8 @@ class AdminMovieController
         $this->requireAdmin();
 
         $pdo = $this->db();
+
+        $categoriesAll = $this->getAllCategories($pdo);
 
         $movie = [
             'id' => null,
@@ -102,7 +123,50 @@ class AdminMovieController
         $languageIds = isset($_POST['languages']) && is_array($_POST['languages']) ? $_POST['languages'] : [];
         $platformIds = isset($_POST['platform_id']) && is_array($_POST['platform_id']) ? $_POST['platform_id'] : [];
         $watchLinks  = isset($_POST['watch_link']) && is_array($_POST['watch_link']) ? $_POST['watch_link'] : [];
+        $newLangs = (isset($_POST['new_language']) && is_array($_POST['new_language'])) ? $_POST['new_language'] : [];
+        foreach ($newLangs as $nl) {
+            $nl = trim((string)$nl);
+            if ($nl === '') continue;
 
+            $st = $pdo->prepare("SELECT id FROM languages WHERE name = :n LIMIT 1");
+            $st->execute([':n' => $nl]);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $ins = $pdo->prepare("INSERT INTO languages (name) VALUES (:n)");
+                $ins->execute([':n' => $nl]);
+                $langId = (int)$pdo->lastInsertId();
+            } else {
+                $langId = (int)$row['id'];
+            }
+
+            $languageIds[] = $langId;
+        }
+
+            $newPlatNames = (isset($_POST['new_platform_name']) && is_array($_POST['new_platform_name'])) ? $_POST['new_platform_name'] : [];
+            $newPlatLinks = (isset($_POST['new_platform_link']) && is_array($_POST['new_platform_link'])) ? $_POST['new_platform_link'] : [];
+
+        $countNP = max(count($newPlatNames), count($newPlatLinks));
+        for ($i=0; $i<$countNP; $i++) {
+            $pn = trim((string)($newPlatNames[$i] ?? ''));
+            $pl = trim((string)($newPlatLinks[$i] ?? ''));
+            if ($pn === '' || $pl === '') continue;
+
+            $st = $pdo->prepare("SELECT id FROM platforms WHERE name = :n LIMIT 1");
+            $st->execute([':n' => $pn]);
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $ins = $pdo->prepare("INSERT INTO platforms (name) VALUES (:n)");
+                $ins->execute([':n' => $pn]);
+                $pid = (int)$pdo->lastInsertId();
+            } else {
+                $pid = (int)$row['id'];
+            }
+
+            $platformIds[] = $pid;
+            $watchLinks[] = $pl;
+        }
         $episodeNumbers = isset($_POST['episode_number']) && is_array($_POST['episode_number']) ? $_POST['episode_number'] : [];
         $episodeNames   = isset($_POST['episode_name']) && is_array($_POST['episode_name']) ? $_POST['episode_name'] : [];
 
@@ -156,6 +220,7 @@ class AdminMovieController
     {
         $this->requireAdmin();
         $pdo = $this->db();
+        $categoriesAll = $this->getAllCategories($pdo);
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {

@@ -2,6 +2,46 @@
 
 class SearchController
 {
+
+private function db(): PDO
+    {
+        $pdo = Database::getConnection();
+        $pdo->exec('PRAGMA foreign_keys = ON;');
+        return $pdo;
+    }
+
+    private function getAllPlatformNames(PDO $pdo): array
+    {
+        $rows = $pdo->query("SELECT name FROM platforms ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($r) => (string)$r['name'], $rows);
+    }
+
+    private function getAllLanguageNames(PDO $pdo): array
+    {
+        $rows = $pdo->query("SELECT name FROM languages ORDER BY name")->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($r) => (string)$r['name'], $rows);
+    }
+
+    private function getAllCategories(PDO $pdo): array
+    {
+        $rows = $pdo->query("SELECT categories FROM titles WHERE categories IS NOT NULL AND TRIM(categories) <> ''")
+                    ->fetchAll(PDO::FETCH_ASSOC);
+
+        $set = [];
+        foreach ($rows as $r) {
+            $cats = (string)$r['categories'];
+            foreach (preg_split('/,/', $cats) as $c) {
+                $c = trim($c);
+                if ($c === '') continue;
+                $set[$c] = true;
+            }
+        }
+
+        $cats = array_keys($set);
+        sort($cats, SORT_NATURAL | SORT_FLAG_CASE);
+        return $cats;
+    }
+
     public function index()
     {
         $errors = [];
@@ -40,6 +80,11 @@ class SearchController
             $sort = 'relevance';
         }
 
+        $pdo = $this->db();
+        $allPlatforms  = $this->getAllPlatformNames($pdo);
+        $allLanguages  = $this->getAllLanguageNames($pdo);
+        $allCategories = $this->getAllCategories($pdo);
+        
         $results = [];
         $hasAnyFilter = ($query !== '')
             || ($category !== null && $category !== '')
