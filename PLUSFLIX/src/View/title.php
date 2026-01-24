@@ -71,7 +71,7 @@ $episodes = $episodes ?? [];
 
 <?php if (!empty($title['image_path'])): ?>
     <div style="margin: 20px 0;">
-        <img src="/<?= htmlspecialchars($title['image_path']) ?>" style="max-width: 300px; border-radius: 8px;">
+        <img src="<?= htmlspecialchars($title['image_path']) ?>" style="max-width: 300px; border-radius: 8px;">
     </div>
 <?php endif; ?>
 

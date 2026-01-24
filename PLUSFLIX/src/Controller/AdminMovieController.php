@@ -88,8 +88,7 @@ class AdminMovieController
         $description = isset($_POST['description']) ? trim((string)$_POST['description']) : '';
         $categories = isset($_POST['categories']) ? trim((string)$_POST['categories']) : '';
         $blockedCountries = isset($_POST['blocked_countries']) ? trim((string)$_POST['blocked_countries']) : '';
-        $imagePath = isset($_POST['image_path']) ? trim((string)$_POST['image_path']) : '';
-
+        
         if ($name === '') {
             $_SESSION['admin_movie_error'] = 'Nazwa (name) jest wymagana.';
             header('Location: /admin/movies/create');
@@ -106,6 +105,15 @@ class AdminMovieController
 
         $episodeNumbers = isset($_POST['episode_number']) && is_array($_POST['episode_number']) ? $_POST['episode_number'] : [];
         $episodeNames   = isset($_POST['episode_name']) && is_array($_POST['episode_name']) ? $_POST['episode_name'] : [];
+
+        $imagePath = null;
+        try {
+                $imagePath = $this->handleImageUpload(null);
+        } catch (Throwable $e) {
+                $_SESSION['admin_movie_error'] = 'Błąd obrazka: ' . $e->getMessage();
+                header('Location: /admin/movies/create');
+                exit;
+         }   
 
         $pdo->beginTransaction();
         try {
@@ -196,14 +204,24 @@ class AdminMovieController
             header('Location: /admin/movies');
             exit;
         }
+        $stmtOld = $pdo->prepare("SELECT image_path FROM titles WHERE id = :id LIMIT 1");
+        $stmtOld->execute([':id' => $id]);
+        $old = $stmtOld->fetch(PDO::FETCH_ASSOC);
+        $currentPath = $old['image_path'] ?? null;
 
+        try {
+            $imagePath = $this->handleImageUpload($currentPath);
+        } catch (Throwable $e) {
+            $_SESSION['admin_movie_error'] = 'Błąd obrazka: ' . $e->getMessage();
+            header('Location: /admin/movies/edit?id=' . $id);
+            exit;
+        }
         $name = isset($_POST['name']) ? trim((string)$_POST['name']) : '';
         $type = isset($_POST['type']) ? trim((string)$_POST['type']) : 'film';
         $description = isset($_POST['description']) ? trim((string)$_POST['description']) : '';
         $categories = isset($_POST['categories']) ? trim((string)$_POST['categories']) : '';
         $blockedCountries = isset($_POST['blocked_countries']) ? trim((string)$_POST['blocked_countries']) : '';
-        $imagePath = isset($_POST['image_path']) ? trim((string)$_POST['image_path']) : '';
-
+        
         if ($name === '') {
             $_SESSION['admin_movie_error'] = 'Nazwa (name) jest wymagana.';
             header('Location: /admin/movies/edit?id=' . $id);
@@ -337,4 +355,57 @@ class AdminMovieController
             $stmt->execute([':tid' => $titleId, ':num' => $num, ':name' => $name]);
         }
     }
+
+    private function handleImageUpload(?string $currentPath = null): ?string
+{
+    if (empty($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+        return $currentPath;
+    }
+
+    if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+        throw new RuntimeException('Błąd uploadu pliku (kod: ' . (int)$_FILES['image']['error'] . ')');
+    }
+
+    if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
+        throw new RuntimeException('Plik jest za duży (max 5MB).');
+    }
+
+    $tmp = $_FILES['image']['tmp_name'];
+
+    $imgInfo = @getimagesize($tmp);
+    if ($imgInfo === false) {
+        throw new RuntimeException('To nie wygląda na obraz.');
+    }
+
+    $mime = $imgInfo['mime'] ?? '';
+    $extMap = [
+        'image/jpeg' => 'jpg',
+        'image/png'  => 'png',
+        'image/gif'  => 'gif',
+        'image/webp' => 'webp',
+    ];
+
+    if (!isset($extMap[$mime])) {
+        throw new RuntimeException('Nieobsługiwany format obrazu: ' . $mime);
+    }
+
+    $ext = $extMap[$mime];
+
+    $uploadDir = __DIR__ . '/../../public/images';
+    if (!is_dir($uploadDir)) {
+        if (!mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
+            throw new RuntimeException('Nie mogę utworzyć folderu images.');
+        }
+    }
+
+    $fileName = time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+    $dest = $uploadDir . '/' . $fileName;
+
+    if (!move_uploaded_file($tmp, $dest)) {
+        throw new RuntimeException('Nie udało się zapisać pliku na serwerze.');
+    }
+
+    return '/images/' . $fileName;
+}
+
 }

@@ -16,7 +16,7 @@
   <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<form method="post" action="<?= $mode === 'edit' ? '/admin/movies/edit' : '/admin/movies/create' ?>">
+<form method="post" enctype="multipart/form-data" action="<?= $mode === 'edit' ? '/admin/movies/edit' : '/admin/movies/create' ?>">
   <?php if ($mode === 'edit'): ?>
     <input type="hidden" name="id" value="<?= (int)$movie['id'] ?>">
   <?php endif; ?>
@@ -55,9 +55,20 @@
   <br>
 
   <div>
-    <label>Ścieżka obrazka (image_path)</label><br>
-    <input type="text" name="image_path" value="<?= htmlspecialchars($movie['image_path'] ?? '') ?>" style="width:420px;">
-  </div>
+  <label>Obrazek</label><br>
+
+  <?php if (!empty($movie['image_path'])): ?>
+    <div style="margin:6px 0;">
+      Aktualny: <?= htmlspecialchars($movie['image_path']) ?><br>
+      <img src="<?= htmlspecialchars($movie['image_path']) ?>" alt="okładka" style="max-width:200px;">
+    </div>
+  <?php endif; ?>
+
+  <input type="file" name="image" accept="image/*">
+  <?php if ($mode === 'edit'): ?>
+    <p style="color:#666; margin:6px 0;">Jeśli nie wybierzesz nowego pliku, zostanie obecny obrazek.</p>
+  <?php endif; ?>
+</div>
 
   <hr>
 
