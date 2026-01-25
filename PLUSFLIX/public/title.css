@@ -1,0 +1,203 @@
+/* title.css */
+
+/* Kinowy Backdrop */
+.movie-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    filter: blur(60px) brightness(0.2);
+    z-index: -1;
+    transform: scale(1.1);
+}
+
+.title-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.title-content {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+/* Plakat */
+.poster-section { position: relative; flex-shrink: 0; }
+.main-poster {
+    width: 320px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.rating-badge {
+    position: absolute;
+    bottom: -15px;
+    right: -15px;
+    background: #ff0000;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 900;
+    box-shadow: 0 10px 20px rgba(255,0,0,0.4);
+}
+
+/* Informacje */
+.info-section { color: white; flex-grow: 1; }
+.title-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.movie-title { font-size: 54px; font-weight: 900; margin: 0; line-height: 1; }
+
+.btn-fav-action {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn-fav-action.active { background: #ff0000; border-color: #ff0000; }
+.btn-fav-action:hover { transform: scale(1.05); background: rgba(255,255,255,0.2); }
+
+.meta-row { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+.type-tag { background: #ff0000; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+.genre-pill { color: #aaa; font-weight: 500; }
+
+.movie-description { font-size: 18px; line-height: 1.6; color: #ddd; margin-bottom: 40px; max-width: 800px; }
+
+.detail-group { margin-bottom: 35px; }
+.detail-group h3 { font-size: 14px; text-transform: uppercase; color: #777; letter-spacing: 1px; margin-bottom: 15px; }
+.badge-lang { background: rgba(255,255,255,0.1); padding: 6px 16px; border-radius: 20px; font-size: 14px; margin-right: 8px; }
+
+.platform-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+.platform-btn {
+    background: white; color: black; padding: 12px 24px; border-radius: 12px;
+    text-decoration: none; font-weight: bold; transition: 0.3s;
+}
+.platform-btn:hover { background: #ff0000; color: white; transform: translateY(-3px); }
+
+/* --- SEKCJA ODCINKI --- */
+.episodes-section { 
+    margin-top: 60px; 
+    background: rgba(255,255,255,0.05); 
+    padding: 30px; 
+    border-radius: 20px; 
+}
+
+.section-title-red {
+    color: #ff0000;
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.episodes-scroll-container {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #ff0000 rgba(255,255,255,0.1);
+}
+
+/* Custom Scrollbar */
+.episodes-scroll-container::-webkit-scrollbar { height: 8px; }
+.episodes-scroll-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.episodes-scroll-container::-webkit-scrollbar-thumb { background: #ff0000; border-radius: 10px; }
+
+.episode-card {
+    position: relative;
+    min-width: 180px;
+    height: 320px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+}
+
+.episode-card:hover { transform: scale(1.05); border-color: #ff0000; }
+
+.episode-number-overlay {
+    color: white;
+    font-size: 100px;
+    font-weight: 900;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    z-index: 1;
+}
+
+.episode-info-hover {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    padding: 20px 10px;
+    border-radius: 0 0 15px 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+}
+
+.episode-card:hover .episode-info-hover { opacity: 1; }
+.ep-name-hover { color: white; font-size: 14px; font-weight: bold; }
+
+/* --- KOMENTARZE --- */
+.reviews-section { margin-top: 80px; margin-bottom: 100px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.btn-main { background: #ff0000; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+.reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+.review-card { 
+    background: rgba(255,255,255,0.08); padding: 25px; border-radius: 15px; 
+    cursor: pointer; transition: 0.3s; border: 1px solid transparent;
+}
+.review-card:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.1); }
+
+.review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.my-review-badge { background: #27ae60; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: none; }
+.review-stars { color: #ffcc00; font-weight: bold; }
+.review-date { color: #777; font-size: 12px; }
+
+/* MODAL */
+.modal {
+    display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); align-items: center; justify-content: center;
+}
+.modal-content {
+    background: #1a1a1a; width: 90%; max-width: 500px; padding: 40px; border-radius: 20px;
+    border: 1px solid #333; color: white; position: relative;
+}
+.close-modal { position: absolute; top: 20px; right: 20px; font-size: 30px; cursor: pointer; color: #555; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: #888; }
+.form-group select, .form-group textarea {
+    width: 100%; background: #222; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px;
+}
+.modal-footer { display: flex; gap: 10px; margin-top: 30px; }
+.btn-submit { background: #ff0000; color: white; border: none; flex-grow: 2; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.btn-delete { background: #444; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
+.btn-cancel { background: transparent; color: #777; border: none; cursor: pointer; }
+
+/* ALERTY */
+.error-box { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; color: #ff0000; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+.success-box { background: rgba(39, 174, 96, 0.2); border: 1px solid #27ae60; color: #27ae60; padding: 15px; border-radius: 10px; margin-bottom: 20px; }

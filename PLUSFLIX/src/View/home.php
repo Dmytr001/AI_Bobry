@@ -2,165 +2,163 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>PLUSFLIX – Strona główna</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        .card { border-bottom: 1px solid #ccc; margin-bottom: 15px; padding-bottom: 10px; }
-        .meta { font-size: 0.9em; color: #666; }
-        a.btn { padding:8px 12px; background:#333; color:#fff; text-decoration:none; border-radius:4px; display:inline-block; }
-        a.title-link { text-decoration:none; color:inherit; display:block; }
-        .card:hover { background:#f9f9f9; }
-        button.btn { padding:8px 12px; background:#333; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-        .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-}
-.section-header select {
-    padding: 5px;
-    font-size: 0.8em;
-}
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLUSFLIX – Znajdź idealny film</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-<?php 
-$allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Romance','Biography','Thriller','Adventure','Sport','Mystery','History']; 
-?>
-<h1>PLUSFLIX</h1>
 
-<p>
-    <a class="btn" href="/search">Przejdź do wyszukiwarki</a>
-    <a class="btn" href="/favorites">❤️ Moje Ulubione</a>
-</p>
-
-<p>
-<?php if (empty($_SESSION['admin_id'])): ?>
-    <a class="btn" href="/admin/login">Zaloguj (admin)</a>
-<?php else: ?>
-    <a class="btn" href="/admin">Panel admina</a>
-
-    <form method="post" action="/admin/logout" style="display:inline;">
-        <button type="submit" class="btn">Wyloguj</button>
-    </form>
-
-    <span style="margin-left:10px; color:#666;">
-        Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
-    </span>
-<?php endif; ?>
-</p>
-
-<?php if (!empty($newestTitles)): ?>
-    <div class="section-header">
-        <h2>Nowości (Ostatnio dodane)</h2>
+<header class="navbar">
+    <a href="/" class="logo">PLUSFLIX</a>
+    <div class="nav-actions">
+        <input type="text" class="search-input" placeholder="Wyszukiwanie...">
+        <?php if (empty($_SESSION['admin_id'])): ?>
+            <a href="/admin/login" class="btn btn-login">Login</a>
+        <?php else: ?>
+            <a href="/admin" class="btn btn-login">Panel Admina</a>
+        <?php endif; ?>
+        <a href="/favorites" class="btn btn-fav">Ulubione</a>
     </div>
+</header>
 
-    <?php foreach ($newestTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
-            <div class="card">
-                <strong>
-                    <?= htmlspecialchars($t['name']) ?>
-                    <span class="fav-icon-placeholder"></span>
-                </strong>
-                <div class="meta">
-                    <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
-                </div>
-                <p><?= htmlspecialchars($t['description']) ?></p>
-            </div>
-        </a>
-    <?php endforeach; ?>
+<section class="hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/Interstellar.jpg') center/cover;">
+    <p style="color: #ff0000; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
+        Rozpocznij wyszukiwanie
+    </p>
+    <h1>Znajdź idealny film na dziś</h1>
+    <a href="/search" class="btn-hero">Rozpocznij wyszukiwanie</a>
+</section>
 
-<?php endif; ?>
+<div class="container">
 
-<?php if (!empty($trendyTitles)): ?>
-    <div class="section-header">
-        <h2>Trendy tygodnia 🔥</h2>
-        <span style="color: #999; font-size: 0.8em;">Odświeża się w każdy poniedziałek</span>
-    </div>
+    <?php if (!empty($newestTitles)): ?>
+        <h2 class="section-title">Nowości w <span>PLUSFLIX</span></h2>
+        <div class="movie-grid">
+            <?php foreach ($newestTitles as $t): ?>
+                <a href="/title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
+                    <div class="card-img" style="background-image: url('<?= !empty($t['image_path']) ? htmlspecialchars($t['image_path']) : 'https://via.placeholder.com/300x450' ?>')">
+                        <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
+                    </div>
+                    
+                    <div class="card-info">
+                        <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
+                        <p class="card-desc"><?= htmlspecialchars($t['description']) ?></p>
+                        
+                        <div class="badges-container">
+                            <div class="badge-list">
+                                <?php 
+                                if(!empty($t['categories'])):
+                                    $tags = explode(',', $t['categories']);
+                                    foreach(array_slice($tags, 0, 2) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
+                                    <?php endforeach; 
+                                endif; ?>
+                            </div>
+                            <div class="badge-list">
+                                <span class="badge">Eng</span>
+                                <span class="badge">Pl</span>
+                            </div>
+                            <div class="badge-list">
+                                <span class="badge">Disney+</span>
+                                <span class="badge">Netflix</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-    <?php foreach ($trendyTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
-            <div class="card">
-                <strong>
-                    <?= htmlspecialchars($t['name']) ?>
-                    <span class="fav-icon-placeholder"></span>
-                </strong>
-                <div class="meta">
-                    <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
-                </div>
-                <p><?= htmlspecialchars($t['description']) ?></p>
-            </div>
-        </a>
-    <?php endforeach; ?>
+    <?php if (!empty($topRatedTitles)): ?>
+        <h2 class="section-title">Najwyżej oceniane</h2>
+        <div class="movie-grid">
+            <?php foreach ($topRatedTitles as $t): ?>
+                <a href="/title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
+                    <div class="card-img" style="background-image: url('<?= !empty($t['image_path']) ? htmlspecialchars($t['image_path']) : 'https://via.placeholder.com/300x450' ?>')">
+                        <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
+                    </div>
+                    
+                    <div class="card-info">
+                        <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
+                        <p class="card-desc"><?= htmlspecialchars($t['description']) ?></p>
+                        
+                        <div class="badges-container">
+                            <div class="badge-list">
+                                <?php 
+                                if(!empty($t['categories'])):
+                                    $tags = explode(',', $t['categories']);
+                                    foreach(array_slice($tags, 0, 2) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
+                                    <?php endforeach; 
+                                endif; ?>
+                            </div>
+                            <div class="badge-list">
+                                <span class="badge">Eng</span>
+                                <span class="badge">Pl</span>
+                            </div>
+                            <div class="badge-list">
+                                <span class="badge">Disney+</span>
+                                <span class="badge">Netflix</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-<?php endif; ?>
-
-<div class="section-header">
-    <h2>Najlepiej oceniane (Top 5)</h2>
 </div>
 
-<?php if (!empty($topRatedTitles)): ?>
-    <?php foreach ($topRatedTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
-            <div class="card">
-                <strong>
-                    <?= htmlspecialchars($t['name']) ?>
-                    <span class="fav-icon-placeholder"></span>
-                </strong>
-                <div class="meta">
-                    <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
-                </div>
-                <p><?= htmlspecialchars($t['description']) ?></p>
-            </div>
-        </a>
-    <?php endforeach; ?>
-
-<?php else: ?>
-    <p style="padding: 20px; color: #666; background: #f0f0f0; border-radius: 4px;">
-        Brak wyników do wyświetlenia.
-    </p>
-<?php endif; ?>
+<footer class="footer">
+    <div class="footer-col">
+        <h3 class="logo" style="color: white;">Namely</h3>
+        <p>Descriptive line about what your company does.</p>
+        <div class="social-icons">
+            <span>📷</span>
+            <span>🔗</span>
+            <span>✖</span>
+        </div>
+    </div>
+    <div class="footer-col">
+        <h4>Features</h4>
+        <ul>
+            <li>Core features</li>
+            <li>Pro experience</li>
+            <li>Integrations</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Learn more</h4>
+        <ul>
+            <li>Blog</li>
+            <li>Case studies</li>
+            <li>Best practices</li>
+        </ul>
+    </div>
+    <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+            <li>Contact</li>
+            <li>Support</li>
+            <li>Legal</li>
+        </ul>
+    </div>
+</footer>
 
 <script>
-    window.onbeforeunload = function() {
-        sessionStorage.setItem("scrollPos", window.scrollY);
-    };
-
-    window.onload = function() {
-        if (sessionStorage.getItem("scrollPos")) {
-            window.scrollTo(0, sessionStorage.getItem("scrollPos"));
-            sessionStorage.removeItem("scrollPos");
-        }
-    };
-
     function checkFavorites() {
         const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
-
-        document.querySelectorAll('.title-link[data-id]').forEach(link => {
+        document.querySelectorAll('.card[data-id]').forEach(link => {
             const currentId = link.getAttribute('data-id');
             if (favorites.includes(currentId)) {
-                const placeholder = link.querySelector('.fav-icon-placeholder');
-                if (placeholder) {
-                    placeholder.innerHTML = '<span class="favorite-indicator">❤️</span>';
+                const titleSpan = link.querySelector('.card-name');
+                if (titleSpan && !titleSpan.innerHTML.includes('❤️')) {
+                    titleSpan.innerHTML += ' ❤️';
                 }
             }
         });
     }
-
-    window.onbeforeunload = function() {
-        sessionStorage.setItem("scrollPos", window.scrollY);
-    };
-
-    window.onload = function() {
-        // Проверяем избранное
-        checkFavorites();
-
-        // Восстанавливаем скролл
-        if (sessionStorage.getItem("scrollPos")) {
-            window.scrollTo(0, sessionStorage.getItem("scrollPos"));
-            sessionStorage.removeItem("scrollPos");
-        }
-    };
+    window.onload = checkFavorites;
 </script>
 
 </body>
