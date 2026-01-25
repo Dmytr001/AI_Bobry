@@ -31,6 +31,7 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
 
 <p>
     <a class="btn" href="/search">Przejdź do wyszukiwarki</a>
+    <a class="btn" href="/favorites">❤️ Moje Ulubione</a>
 </p>
 
 <p>
@@ -53,11 +54,14 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
     <div class="section-header">
         <h2>Nowości (Ostatnio dodane)</h2>
     </div>
-    
+
     <?php foreach ($newestTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link">
+        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
             <div class="card">
-                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <strong>
+                    <?= htmlspecialchars($t['name']) ?>
+                    <span class="fav-icon-placeholder"></span>
+                </strong>
                 <div class="meta">
                     <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
                 </div>
@@ -65,6 +69,7 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
             </div>
         </a>
     <?php endforeach; ?>
+
 <?php endif; ?>
 
 <?php if (!empty($trendyTitles)): ?>
@@ -72,11 +77,14 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
         <h2>Trendy tygodnia 🔥</h2>
         <span style="color: #999; font-size: 0.8em;">Odświeża się w każdy poniedziałek</span>
     </div>
-    
+
     <?php foreach ($trendyTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link">
+        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
             <div class="card">
-                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <strong>
+                    <?= htmlspecialchars($t['name']) ?>
+                    <span class="fav-icon-placeholder"></span>
+                </strong>
                 <div class="meta">
                     <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
                 </div>
@@ -84,6 +92,7 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
             </div>
         </a>
     <?php endforeach; ?>
+
 <?php endif; ?>
 
 <div class="section-header">
@@ -92,9 +101,12 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
 
 <?php if (!empty($topRatedTitles)): ?>
     <?php foreach ($topRatedTitles as $t): ?>
-        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link">
+        <a href="/title?id=<?= (int)$t['id'] ?>" class="title-link" data-id="<?= (int)$t['id'] ?>">
             <div class="card">
-                <strong><?= htmlspecialchars($t['name']) ?></strong>
+                <strong>
+                    <?= htmlspecialchars($t['name']) ?>
+                    <span class="fav-icon-placeholder"></span>
+                </strong>
                 <div class="meta">
                     <?= htmlspecialchars($t['type']) ?> | ⭐ <?= htmlspecialchars($t['average_rating']) ?> | Kategorie: <?= htmlspecialchars($t['categories']) ?>
                 </div>
@@ -102,6 +114,7 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
             </div>
         </a>
     <?php endforeach; ?>
+
 <?php else: ?>
     <p style="padding: 20px; color: #666; background: #f0f0f0; border-radius: 4px;">
         Brak wyników do wyświetlenia.
@@ -114,6 +127,35 @@ $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Roma
     };
 
     window.onload = function() {
+        if (sessionStorage.getItem("scrollPos")) {
+            window.scrollTo(0, sessionStorage.getItem("scrollPos"));
+            sessionStorage.removeItem("scrollPos");
+        }
+    };
+
+    function checkFavorites() {
+        const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+
+        document.querySelectorAll('.title-link[data-id]').forEach(link => {
+            const currentId = link.getAttribute('data-id');
+            if (favorites.includes(currentId)) {
+                const placeholder = link.querySelector('.fav-icon-placeholder');
+                if (placeholder) {
+                    placeholder.innerHTML = '<span class="favorite-indicator">❤️</span>';
+                }
+            }
+        });
+    }
+
+    window.onbeforeunload = function() {
+        sessionStorage.setItem("scrollPos", window.scrollY);
+    };
+
+    window.onload = function() {
+        // Проверяем избранное
+        checkFavorites();
+
+        // Восстанавливаем скролл
         if (sessionStorage.getItem("scrollPos")) {
             window.scrollTo(0, sessionStorage.getItem("scrollPos"));
             sessionStorage.removeItem("scrollPos");
