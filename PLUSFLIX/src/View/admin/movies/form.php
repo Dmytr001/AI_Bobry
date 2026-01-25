@@ -16,7 +16,7 @@
   <p style="color:red;"><?= htmlspecialchars($error) ?></p>
 <?php endif; ?>
 
-<form method="post" action="<?= $mode === 'edit' ? '/admin/movies/edit' : '/admin/movies/create' ?>">
+<form method="post" enctype="multipart/form-data" action="<?= $mode === 'edit' ? '/admin/movies/edit' : '/admin/movies/create' ?>">
   <?php if ($mode === 'edit'): ?>
     <input type="hidden" name="id" value="<?= (int)$movie['id'] ?>">
   <?php endif; ?>
@@ -43,9 +43,20 @@
   <br>
 
   <div>
-    <label>Kategorie</label><br>
-    <input type="text" name="categories" value="<?= htmlspecialchars($movie['categories'] ?? '') ?>" style="width:420px;">
-  </div>
+  <label>Kategorie</label><br>
+  <input type="text"
+         name="categories"
+         list="categoriesList"
+         value="<?= htmlspecialchars($movie['categories'] ?? '') ?>"
+         style="width:420px;">
+  <datalist id="categoriesList">
+    <?php foreach (($categoriesAll ?? []) as $c): ?>
+      <option value="<?= htmlspecialchars($c) ?>"></option>
+    <?php endforeach; ?>
+  </datalist>
+  <p style="color:#666; margin:6px 0;">Format: np. Action, Drama, Sci-Fi</p>
+</div>
+
   <br>
 
   <div>
@@ -55,9 +66,20 @@
   <br>
 
   <div>
-    <label>Ścieżka obrazka (image_path)</label><br>
-    <input type="text" name="image_path" value="<?= htmlspecialchars($movie['image_path'] ?? '') ?>" style="width:420px;">
-  </div>
+  <label>Obrazek</label><br>
+
+  <?php if (!empty($movie['image_path'])): ?>
+    <div style="margin:6px 0;">
+      Aktualny: <?= htmlspecialchars($movie['image_path']) ?><br>
+      <img src="<?= htmlspecialchars($movie['image_path']) ?>" alt="okładka" style="max-width:200px;">
+    </div>
+  <?php endif; ?>
+
+  <input type="file" name="image" accept="image/*">
+  <?php if ($mode === 'edit'): ?>
+    <p style="color:#666; margin:6px 0;">Jeśli nie wybierzesz nowego pliku, zostanie obecny obrazek.</p>
+  <?php endif; ?>
+</div>
 
   <hr>
 
@@ -81,9 +103,7 @@
     <?php endforeach; ?>
   </div>
   <button type="button" onclick="addLanguage()">+ Dodaj język</button>
-
   <hr>
-
   <h3>Platformy + link</h3>
   <div id="platformsWrap">
     <?php
@@ -107,7 +127,25 @@
   <button type="button" onclick="addPlatform()">+ Dodaj platformę</button>
 
   <hr>
+  <hr>
+    <h4>Dodaj nowy język (opcjonalnie)</h4>
+    <div id="newLanguagesWrap">
+      <div style="margin-bottom:6px;">
+        <input type="text" name="new_language[]" >
+        <button type="button" onclick="removeRow(this)">Usuń</button>
+      </div>
+    </div>
+    <button type="button" onclick="addNewLanguage()">+ Dodaj kolejny nowy język</button>
 
+    <h4>Dodaj nową platformę (opcjonalnie)</h4>
+    <div id="newPlatformsWrap">
+      <div style="margin-bottom:6px;">
+       <input type="text" name="new_platform_name[]" >
+       <input type="text" name="new_platform_link[]" placeholder="link" style="width:380px;">
+        <button type="button" onclick="removeRow(this)">Usuń</button>
+      </div>
+    </div>
+    <button type="button" onclick="addNewPlatform()">+ Dodaj kolejną nową platformę</button>
   <div id="episodesSection">
     <h3>Odcinki (tylko dla serialu)</h3>
     <div id="episodesWrap">
@@ -144,12 +182,29 @@ function addLanguage() {
   wrap.appendChild(clone);
 }
 
+function addNewLanguage() {
+  var wrap = document.getElementById('newLanguagesWrap');
+  var first = wrap.querySelector('div');
+  var clone = first.cloneNode(true);
+  clone.querySelector('input').value = "";
+  wrap.appendChild(clone);
+}
+
 function addPlatform() {
   var wrap = document.getElementById('platformsWrap');
   var first = wrap.querySelector('.platRow');
   var clone = first.cloneNode(true);
   clone.querySelector('select').value = "0";
   clone.querySelector('input').value = "";
+  wrap.appendChild(clone);
+}
+
+function addNewPlatform() {
+  var wrap = document.getElementById('newPlatformsWrap');
+  var first = wrap.querySelector('div');
+  var clone = first.cloneNode(true);
+  clone.querySelectorAll('input')[0].value = "";
+  clone.querySelectorAll('input')[1].value = "";
   wrap.appendChild(clone);
 }
 

@@ -40,6 +40,7 @@ $episodes = $episodes ?? [];
 <div style="margin-bottom: 15px;">
     <a href="/" style="margin-right:10px;">← Polecane</a>
     <a href="/search">Wyszukiwarka</a>
+    <a class="btn" href="/favorites">❤️ Moje Ulubione</a>
 </div>
 
 <p>
@@ -71,14 +72,19 @@ $episodes = $episodes ?? [];
 
 <?php if (!empty($title['image_path'])): ?>
     <div style="margin: 20px 0;">
-        <img src="/<?= htmlspecialchars($title['image_path']) ?>" style="max-width: 300px; border-radius: 8px;">
+        <img src="<?= htmlspecialchars($title['image_path']) ?>" style="max-width: 300px; border-radius: 8px;">
     </div>
 <?php endif; ?>
 
     <div class="title-header-container">
-    <h1 style="margin: 0;"><?= htmlspecialchars($title['name']) ?></h1>
+        <h1 style="margin: 0;"><?= htmlspecialchars($title['name']) ?></h1>
 
-</div>
+        <button id="favoriteBtn" class="favorite-btn" onclick="toggleFavorite()">
+            <span id="favIcon">★</span>
+            <span id="favText">Dodaj do ulubionych</span>
+        </button>
+    </div>
+
     <div>⭐ <?= htmlspecialchars($title['average_rating']) ?> | <?= htmlspecialchars($title['type']) ?></div>
     <p><?= htmlspecialchars($title['description']) ?></p>
 
@@ -246,6 +252,52 @@ $episodes = $episodes ?? [];
         window.onclick = function(event) {
             if (event.target == document.getElementById('reviewModal')) closeModal();
         }
+
+        // Получаем ID текущего фильма из PHP
+        const titleId = "<?= (int)$title['id'] ?>";
+
+        // Функция для обновления внешнего вида кнопки
+        function updateFavoriteButton() {
+            const btn = document.getElementById('favoriteBtn');
+            const text = document.getElementById('favText');
+            const icon = document.getElementById('favIcon');
+
+            // Получаем массив избранного из localStorage
+            let favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+
+            if (favorites.includes(titleId)) {
+                btn.classList.add('active');
+                text.innerText = "Usuń z ulubionych";
+                icon.innerText = "❤️";
+            } else {
+                btn.classList.remove('active');
+                text.innerText = "Dodaj do ulubionych";
+                icon.innerText = "★";
+            }
+        }
+
+        // Функция переключения (добавить/удалить)
+        function toggleFavorite() {
+            let favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+            const index = favorites.indexOf(titleId);
+
+            if (index > -1) {
+                // Если уже есть — удаляем
+                favorites.splice(index, 1);
+            } else {
+                // Если нет — добавляем
+                favorites.push(titleId);
+            }
+
+            // Сохраняем обновленный массив
+            localStorage.setItem('plusflix_favorites', JSON.stringify(favorites));
+
+            // Обновляем кнопку
+            updateFavoriteButton();
+        }
+
+        // Запускаем проверку при загрузке страницы
+        document.addEventListener('DOMContentLoaded', updateFavoriteButton);
     </script>
 <?php endif; ?>
 

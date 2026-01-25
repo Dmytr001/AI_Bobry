@@ -49,7 +49,7 @@
 
 <h1>Wyszukiwarka PLUSFLIX</h1>
 <p><a class="btn" href="/">← Wróć do polecanych</a></p>
-
+<a class="btn" href="/favorites">❤️ Moje Ulubione</a>
 <p>
     <?php if (empty($_SESSION['admin_id'])): ?>
         <a class="btn" href="/admin/login">Zaloguj (admin)</a>
@@ -79,13 +79,13 @@
 
     <div class="row-filters">
         <select name="category">
-            <option value="">Wszystkie kategorie</option>
-            <?php
-            $allCategories = ['Action','Drama','Comedy','Fantasy','Sci-Fi','Animation','Romance','Biography','Thriller','Adventure','Sport','Mystery','History'];
-            foreach ($allCategories as $cat):
-                $selected = (isset($_GET['category']) && $_GET['category']==$cat) ? 'selected' : '';
-                ?>
-                <option value="<?= $cat ?>" <?= $selected ?>><?= $cat ?></option>
+    <option value="">Wszystkie kategorie</option>
+
+    <?php foreach (($allCategories ?? []) as $cat): ?>
+        <?php $selected = (isset($_GET['category']) && $_GET['category'] === $cat) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($cat) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($cat) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 
@@ -96,24 +96,25 @@
         </select>
 
         <select name="platform">
-            <option value="">Wszystkie platformy</option>
-            <?php
-            $allPlatforms = ['Netflix','Apple TV+'];
-            foreach ($allPlatforms as $p):
-                $selected = (isset($_GET['platform']) && $_GET['platform']==$p) ? 'selected' : '';
-                ?>
-                <option value="<?= $p ?>" <?= $selected ?>><?= $p ?></option>
+        <option value="">Wszystkie platformy</option>
+
+        <?php foreach (($allPlatforms ?? []) as $p): ?>
+            <?php $selected = (isset($_GET['platform']) && $_GET['platform'] === $p) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($p) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($p) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 
+
         <select name="language">
-            <option value="">Wszystkie języki</option>
-            <?php
-            $allLanguages = ['Polish','English', 'Italian', 'Spanish', 'French', 'German', 'Japanese', 'Russian', 'Irish'];
-            foreach ($allLanguages as $l):
-                $selected = (isset($_GET['language']) && $_GET['language']==$l) ? 'selected' : '';
-                ?>
-                <option value="<?= $l ?>" <?= $selected ?>><?= $l ?></option>
+        <option value="">Wszystkie języki</option>
+
+            <?php foreach (($allLanguages ?? []) as $l): ?>
+                <?php $selected = (isset($_GET['language']) && $_GET['language'] === $l) ? 'selected' : ''; ?>
+                <option value="<?= htmlspecialchars($l) ?>" <?= $selected ?>>
+                <?= htmlspecialchars($l) ?>
+                </option>
             <?php endforeach; ?>
         </select>
 
@@ -141,6 +142,28 @@
     function copyUrl() {
         navigator.clipboard.writeText(window.location.href);
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Получаем список ID из localStorage
+        const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+
+        if (favorites.length > 0) {
+            // 2. Ищем все ссылки на фильмы на странице
+            document.querySelectorAll('.title-link[data-id]').forEach(link => {
+                const currentId = link.getAttribute('data-id');
+
+                // 3. Если ID фильма есть в массиве избранного
+                if (favorites.includes(currentId)) {
+                    // Находим место для иконки внутри текущей карточки
+                    const placeholder = link.querySelector('.fav-icon-placeholder');
+                    if (placeholder) {
+                        // Вставляем некликабельную иконку
+                        placeholder.innerHTML = '<span class="favorite-indicator" title="Ulubione">❤️</span>';
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 <?php if (!empty($errors)): ?>
@@ -154,9 +177,12 @@
 <?php if (!empty($results)): ?>
     <h2>Wyniki:</h2>
     <?php foreach ($results as $title): ?>
-        <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link">
+        <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link" data-id="<?= (int)$title['id'] ?>">
             <div class="title">
-                <strong><?= htmlspecialchars($title['name']) ?></strong>
+                <strong>
+                    <?= htmlspecialchars($title['name']) ?>
+                    <span class="fav-icon-placeholder"></span>
+                </strong>
                 <div class="type">
                     <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?> | Kategorie: <?= htmlspecialchars($title['categories']) ?>
                 </div>
@@ -184,51 +210,4 @@
 </body>
 </html>
 
-
-
-Praca nad 3-my kamieniami milowymi - [ 30.02 ]
-
-
-
-
-
-⁠
-
-Denys
-
-
-
-Tarakhkalo
-
-,
-
-Dmytro
-
-
-
-Terletskyi
-
-,  - Design i stylizacja [ 28.02 ]:
-
-
-
-Dopracowanie designu stron na podstawie makiety w Figmie (z dopuszczalnymi niewielkimi odstępstwach).
-
-
-
-Dmytro Mahaliuk - System ulubionych filmów [ 26.02 ]:
-
-
-
-Proponowana implementacja: Na stronie opisu filmu należy dodać przycisk "Dodaj do ulubionych". Po kliknięciu ID filmu powinno być zapisywane w localStorage. Informacja ta będzie wykorzystywana we wszystkich widokach filmów (w wyszukiwarce, sekcji polecanych oraz na stronie opisu), aby wyświetlać specjalną ikonę przy filmach znajdujących się na liście ulubionych. Ponowne naciśnięcie przycisku dodawania do ulubionych powinno usuwać film z ulubionych (usuwać odpowiednie dane z local storage oraz przeładowywać stronę)
-
-
-
-1 osoba - Rozbudowa panelu administratora [ 26.02 ]:
-
-Funkcjonalność dodawania: Należy usprawnić proces dodawania treści (formularz powinien pozwalać na wypełnienie wszystkich danych od razu lub na stworzenie pustego szkicu, który będzie można edytować później z poziomu listy)
-
-Obsługa obrazów: Zdjęcia nie powinny być dodawane poprzez wpisanie ścieżki. System powinien umożliwiać przesyłanie pliku bezpośrednio do folderu images/, a następnie automatycznie zapisywać poprawną ścieżkę w bazie danych do niego.
-
-Dynamiczne listy (Język, Platforma, Kategorie): Podczas dodawania system powinien podpowiadać istniejące już w bazie opcje (podobnie jak obecnie dla platform i języków). Należy dodać możliwość wpisania nowej wartości, która zostanie automatycznie dodana do bazy danych. Ponieważ kategorie nie mają oddzielnej tabeli, system musi przeskanować wszystkie rekordy w poszukiwaniu unikalnych kategorii, aby wyświetlić podpowiedzi. Nowo dodane kategorie, platformy lub języki muszą automatycznie pojawiać się jako opcje w filtrach wyszukiwarki.
 
