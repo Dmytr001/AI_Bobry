@@ -1,220 +1,462 @@
-/* style.css */
-:root {
-    --primary-red: #ff0000;
-    --dark-bg: #000000;
-    --card-bg: #b3b3b3;
-    --text-white: #ffffff;
-    --text-gray: #666666;
+/* ====== PLUSFLIX (clean) ====== */
+
+:root{
+    --primary-red:#ff0000;
+    --dark-bg:#000000;
+    --text-white:#ffffff;
+    --text-gray:#666666;
+
+    /* theme vars (used by light-mode toggle) */
+    --theme-bg:#000000;
+    --theme-text:#ffffff;
+    --theme-accent:#ff0000;
 }
 
-body {
-    background-color: var(--dark-bg);
-    color: var(--text-white);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+/* Light theme toggle */
+body.light-mode{
+    --theme-bg:#f5f5f5;
+    --theme-text:#000000;
+    --theme-accent:#cc0000;
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 5%;
-    background-color: rgba(0, 0, 0, 0.9);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+*{ box-sizing:border-box; }
+
+body{
+    background:var(--theme-bg);
+    color:var(--theme-text);
+    font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin:0;
+    padding:0;
 }
 
-.logo {
-    color: var(--primary-red);
-    font-size: 24px;
-    font-weight: 900;
-    text-decoration: none;
-    letter-spacing: 1px;
+/* ====== Navbar ====== */
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 5%;
+    background-color:rgba(0,0,0,0.9);
+    position:sticky;
+    top:0;
+    z-index:1000;
 }
 
-.nav-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.logo-link{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
 }
 
-.search-input {
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: 1px solid #333;
-    background: #222;
-    color: white;
+.logo-img{ height:28px; width:auto; display:block; }
+
+.logo-text{
+    color:var(--primary-red);
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:1px;
 }
 
-.btn {
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    transition: 0.3s;
+/* fallback если где-то остался старый .logo */
+.logo{
+    color:var(--primary-red);
+    font-size:24px;
+    font-weight:900;
+    text-decoration:none;
+    letter-spacing:1px;
 }
 
-.btn-login { background: #333; color: white; }
-.btn-fav { background: var(--primary-red); color: white; }
-
-.hero {
-    height: 60vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+.nav-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
 }
 
-.hero h1 { 
-    font-size: 3.5rem; 
-    margin-bottom: 30px; 
-    max-width: 800px;
+.search-input{
+    padding:8px 15px;
+    border-radius:20px;
+    border:1px solid #333;
+    background:#222;
+    color:#fff;
 }
 
-.btn-hero { 
-    background-color: var(--primary-red); 
-    color: white; 
-    padding: 12px 30px; 
-    border-radius: 8px; 
-    text-decoration: none; 
-    font-weight: bold; 
-    transition: 0.3s;
+/* buttons */
+.btn{
+    padding:8px 16px;
+    border-radius:20px;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    transition:0.2s;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
 }
 
-.btn-hero:hover { transform: scale(1.05); }
+.btn-login{ background:#333; color:#fff; }
+.btn-fav{ background:var(--primary-red); color:#fff; }
 
-.container { 
-    padding: 60px 5%; 
+.theme-toggle-btn{
+    background:none;
+    border:none;
+    color:var(--theme-text);
+    font-size:20px;
+    cursor:pointer;
+    margin-left:10px;
 }
 
-.section-title { 
-    font-size: 32px; 
-    margin-bottom: 40px; 
-    text-align: center;
+/* ====== Home hero ====== */
+.hero{
+    height:60vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
 }
 
-.section-title span { color: var(--primary-red); }
-
-.movie-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 240px);
-    gap: 30px;
-    justify-content: center;
-    align-items: stretch;
+.hero h1{
+    font-size:3.5rem;
+    margin-bottom:30px;
+    max-width:800px;
 }
 
-.card {
-    background: var(--card-bg);
-    border-radius: 20px;
-    overflow: hidden;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    transition: transform 0.3s ease;
+.btn-hero{
+    background-color:var(--primary-red);
+    color:#fff;
+    padding:12px 30px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:bold;
+    transition:0.2s;
+}
+.btn-hero:hover{ transform:scale(1.05); }
+
+/* ====== Sections ====== */
+.container{ padding:20px 60px; }
+
+.section-title{
+    font-size:32px;
+    margin-bottom:40px;
+    text-align:center;
+}
+.section-title span{ color:var(--primary-red); }
+
+/* ====== GRID (5 posters everywhere) ====== */
+.movie-grid{
+    display:grid;
+    grid-template-columns:repeat(5, 240px);
+    gap:30px;
+    justify-content:center;
+    align-items:stretch;
 }
 
-.card:hover { transform: translateY(-5px); }
+.card{
+    width:240px;
+    background:#b3b3b3;
+    border-radius:20px;
+    overflow:hidden;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    transition:transform 0.2s ease;
+}
+.card:hover{ transform:translateY(-5px); }
 
-.card-img {
-    height: 320px;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+.card-img{
+    height:320px;
+    background-size:cover;
+    background-position:center;
+    position:relative;
+    -webkit-mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+    mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
-.rating {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: #000;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 14px;
+.rating{
+    position:absolute;
+    top:15px;
+    right:15px;
+    background:#000;
+    color:#fff;
+    padding:5px 10px;
+    border-radius:8px;
+    font-weight:bold;
+    font-size:14px;
+}
+.rating span{ color:#ffcc00; }
+
+.card-info{
+    padding:14px 16px;
+    flex-grow:1;
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+    color:#000;
 }
 
-.rating span { color: #ffcc00; }
-
-.card-info {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    color: #000;
-}
-.card-name {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 54px;
+.card-name{
+    font-size:26px;
+    font-weight:800;
+    margin-bottom:8px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    min-height:unset;
 }
 
-.card-desc {
-    font-size: 13px;
-    color: #444;
-    line-height: 1.4;
-    margin-bottom: 15px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: 54px;
+/* hide descriptions (Figma style) */
+.card-desc{ display:none; }
+
+.badges-container{
+    margin-top:auto;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
-/* Badges alignment */
-.badges-container {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.badge-list{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:5px;
 }
 
-.badge-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 5px;
+.badge{
+    background:var(--primary-red);
+    color:#fff;
+    padding:4px 12px;
+    border-radius:10px;
+    font-size:11px;
+    font-weight:bold;
 }
 
-.badge {
-    background: var(--primary-red);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: bold;
+/* ====== Search panel (Figma) ====== */
+body.search-page .search-redesign-container{
+    background:#8f8f8f;
+    border-radius:18px;
+    margin:20px 70px;
+    padding:22px 24px;
+    position:relative;
+    z-index:3000;
+
+    /* не режем выпадашки/панель */
+    overflow:visible;
 }
 
-/* Footer */
-.footer {
-    background: #000;
-    padding: 60px 5%;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    color: white;
-    border-top: 1px solid #222;
+body.search-page .search-top-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:nowrap;
+
+    /* важно для правого столбца кнопок */
+    position:relative;
+    padding-right:86px;   /* место справа под столбец */
+    min-height:108px;     /* чтобы 3 кнопки влезли по высоте */
 }
 
-.footer-col { max-width: 300px; margin-bottom: 30px; }
-.footer h4 { margin-bottom: 20px; font-size: 18px; }
-.footer ul { list-style: none; padding: 0; }
-.footer li { margin-bottom: 12px; color: var(--text-gray); font-size: 14px; }
+body.search-page .new-search-input{
+    flex:0 0 360px;
+    max-width:360px;
+    padding:12px 18px;
+    border-radius:12px;
+    border:none;
+    background:#e6e6e6;
+    font-size:16px;
+    color:#000;
+    font-weight:500;
+}
+body.search-page .new-search-input::placeholder{ color:#333; }
 
-.social-icons { display: flex; gap: 15px; margin-top: 20px; }
-.social-icons span { color: var(--primary-red); font-size: 20px; cursor: pointer; }
+/* min/max rating inputs */
+body.search-page .rating-input-style{
+    width:150px;
+    background:#e6e6e6;
+    border:none;
+    padding:10px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:bold;
+    color:var(--theme-accent);
+}
+
+/* old hidden sort select can keep .filter-btn-style */
+body.search-page .filter-btn-style{
+    appearance:none;
+    background:#6b6b6b;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:12px;
+    border:none;
+    font-weight:500;
+    cursor:pointer;
+    text-align:center;
+    font-size:14px;
+    flex:0 0 auto;
+}
+body.search-page .filter-btn-style:hover{ background:#555; }
+
+/* ===== Custom dropdown (Figma-like) ===== */
+body.search-page .pf-select{
+    position:relative;
+    z-index:3100;
+}
+
+body.search-page .pf-select__native{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+    width:1px;
+    height:1px;
+}
+
+body.search-page .pf-select__btn{
+    background:#000;
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:12px 22px;
+    font-weight:800;
+    font-size:18px;
+    cursor:pointer;
+    min-width:120px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+body.search-page .pf-select.is-active .pf-select__btn{
+    background:var(--primary-red);
+}
+
+/* second row inside gray panel (Figma) */
+body.search-page .pf-panel-row{
+    margin-top:18px;
+    display:none;                 /* показываем только когда открыт фильтр */
+    gap:18px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+body.search-page .pf-panel-row.is-open{ display:flex; }
+
+body.search-page .pf-panel-opt{
+    background:#000;
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:14px 22px;
+    font-weight:800;
+    font-size:20px;
+    cursor:pointer;
+    min-width:180px;
+    text-align:center;
+}
+
+body.search-page .pf-panel-opt.is-selected{
+    background:var(--primary-red);
+}
+
+/* ===== Right buttons: vertical column ===== */
+body.search-page .search-right{
+    position:absolute;
+    right:16px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:center;
+    z-index:5;
+}
+
+/* unified icon buttons (clear/copy/search) */
+body.search-page .icon-btn{
+    width:44px;
+    height:44px;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:14px;
+    background:rgba(0,0,0,0.35);
+    color:#fff;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    box-shadow:0 6px 14px rgba(0,0,0,0.25);
+    transition:transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+body.search-page .icon-btn:hover{
+    background:rgba(0,0,0,0.48);
+    border-color:rgba(255,255,255,0.28);
+    transform:translateY(-1px);
+}
+
+body.search-page .icon-btn:active{ transform:translateY(0); }
+
+body.search-page .icon-btn .icon{
+    width:20px;
+    height:20px;
+    display:block;
+}
+
+/* ====== Footer ====== */
+.footer{
+    background:#000;
+    padding:60px 5%;
+    display:flex;
+    justify-content:space-around;
+    flex-wrap:wrap;
+    color:#fff;
+    border-top:1px solid #222;
+}
+.footer-col{ max-width:300px; margin-bottom:30px; }
+.footer h4{ margin-bottom:20px; font-size:18px; }
+.footer ul{ list-style:none; padding:0; }
+.footer li{ margin-bottom:12px; color:var(--text-gray); font-size:14px; }
+
+.social-icons{ display:flex; gap:15px; margin-top:20px; }
+.social-icons span{ color:var(--primary-red); font-size:20px; cursor:pointer; }
+
+/* ====== Responsive grid ====== */
+@media (max-width: 1400px){ .movie-grid{ grid-template-columns: repeat(4, 240px); } }
+@media (max-width: 1120px){ .movie-grid{ grid-template-columns: repeat(3, 240px); } }
+@media (max-width: 840px){  .movie-grid{ grid-template-columns: repeat(2, 240px); } }
+@media (max-width: 560px){
+    .movie-grid{ grid-template-columns: 1fr; }
+    .card{ width:auto; }
+    .container{ padding:20px 20px; }
+    body.search-page .search-redesign-container{ margin:12px 12px; }
+}
+/* 1) СТОЛБЕЦ КНОПОК — правее и не перекрывает */
+body.search-page .search-top-row{
+    padding-right: 110px;   /* было 86px: больше места под правый столбец */
+}
+
+body.search-page .search-right{
+    right: 8px;             /* ближе к правому краю серой панели */
+}
+
+/* 2) КНОПКИ ЖАНРОВ/ФИЛЬТРОВ — меньше */
+body.search-page .pf-panel-row{
+    gap: 12px;              /* было 18px */
+    margin-top: 14px;       /* чуть компактнее */
+}
+
+body.search-page .pf-panel-opt{
+    padding: 10px 16px;     /* было 14px 22px */
+    font-size: 16px;        /* было 20px */
+    min-width: 140px;       /* было 180px */
+    border-radius: 12px;    /* чуть меньше */
+}
+
+/* (опционально) если хочешь, чтобы влезало больше в ряд */
+body.search-page .pf-select__btn{
+    padding: 10px 18px;     /* было 12px 22px */
+    font-size: 16px;        /* было 18px */
+    min-width: 110px;       /* было 120px */
+}

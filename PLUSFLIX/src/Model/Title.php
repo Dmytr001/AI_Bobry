@@ -5,7 +5,19 @@ class Title
     public static function search($query=null, $category=null, $min_rating=null, $max_rating=null, $platform=null, $type=null, $language=null, $sort='relevance')
     {
         $db = Database::getConnection();
-        $sql = "SELECT DISTINCT t.* FROM titles t";
+        $sql = "SELECT DISTINCT
+          t.id,
+          t.name,
+          t.description,
+          t.categories,
+          t.type,
+          t.average_rating AS average_rating,
+          t.image_path AS imagepath
+        FROM titles t";
+
+
+
+
         $params = [];
 
         if ($platform) {
@@ -29,6 +41,8 @@ class Title
             $sql .= " AND (t.name LIKE :query OR t.description LIKE :query)";
             $params[':query'] = "%$query%";
         }
+
+
 
         if ($category) {
             $sql .= " AND t.categories LIKE :category";

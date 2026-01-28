@@ -9,8 +9,13 @@
 <body>
 
 <header class="navbar">
-    <a href="/" class="logo">PLUSFLIX</a>
+    <a href="/" class="logo-link" aria-label="PLUSFLIX">
+        <img src="/images/logo.png" alt="PLUSFLIX" class="logo-img">
+        <span class="logo-text">PLUSFLIX</span>
+    </a>
+
     <div class="nav-actions">
+
         <input type="text" class="search-input" placeholder="Wyszukiwanie...">
         <?php if (empty($_SESSION['admin_id'])): ?>
             <a href="/admin/login" class="btn btn-login">Login</a>
@@ -18,6 +23,8 @@
             <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
         <a href="/favorites" class="btn btn-fav">Ulubione</a>
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
+
     </div>
 </header>
 
@@ -160,6 +167,30 @@
     }
     window.onload = checkFavorites;
 </script>
+<script>
+    (function () {
+        const key = 'plusflix-theme';
+        const btn = document.getElementById('themeToggle');
+
+        function syncIcon() {
+            if (!btn) return;
+            btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        }
+
+        const saved = localStorage.getItem(key);
+        if (saved === 'light') document.body.classList.add('light-mode');
+        syncIcon();
+
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                localStorage.setItem(key, document.body.classList.contains('light-mode') ? 'light' : 'dark');
+                syncIcon();
+            });
+        }
+    })();
+</script>
+
 
 </body>
 </html>

@@ -1,213 +1,378 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>PLUSFLIX – wyszukiwarka</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PLUSFLIX — Wyszukiwarka</title>
 
-        .error-box { padding:10px; background:#ffd7d7; border:1px solid #ff9b9b; margin: 10px 0; }
-
-        .title { border-bottom: 1px solid #ccc; margin-bottom: 15px; padding-bottom: 10px; }
-        .type { font-size: 0.9em; color: #666; }
-
-        .title-link { text-decoration: none; color: inherit; display: block; }
-        .title:hover { background-color: #f9f9f9; cursor: pointer; }
-
-        a.btn { padding:8px 12px; background:#333; color:white; text-decoration:none; border-radius:4px; display:inline-block; }
-        a.reset { padding:8px 12px; background:#ccc; color:black; text-decoration:none; border-radius:4px; display:inline-block; }
-
-        /* NEW layout: top row (q + buttons), filters below */
-        .search-form { margin: 20px 0; }
-
-        .row-top{
-            display:flex;
-            gap:12px;
-            align-items:center;
-        }
-        .row-top .q{
-            flex:1;
-            min-width:220px;
-        }
-        .actions{
-            display:flex;
-            gap:10px;
-            margin-left:auto;
-            white-space:nowrap;
-        }
-        .row-filters{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-top:10px;
-        }
-
-        input, select, button { padding:8px; margin:0; }
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-<h1>Wyszukiwarka PLUSFLIX</h1>
-<p><a class="btn" href="/">← Wróć do polecanych</a></p>
-<a class="btn" href="/favorites">❤️ Moje Ulubione</a>
-<p>
-    <?php if (empty($_SESSION['admin_id'])): ?>
-        <a class="btn" href="/admin/login">Zaloguj (admin)</a>
-    <?php else: ?>
-    <a class="btn" href="/admin">Panel admina</a>
+<body class="search-page">
 
-<form method="post" action="/admin/logout" style="display:inline;">
-    <button type="submit" class="btn">Wyloguj</button>
-</form>
+<header class="navbar">
+    <a href="/" class="logo-link" aria-label="PLUSFLIX">
+        <img src="/images/logo.png" alt="PLUSFLIX" class="logo-img">
+        <span class="logo-text">PLUSFLIX</span>
+    </a>
 
-<span style="margin-left:10px; color:#666;">
-        Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login'] ?? '') ?>
-    </span>
-<?php endif; ?>
-</p>
+    <div class="nav-actions">
+        <?php if (empty($_SESSION['admin_id'])): ?>
+            <a href="admin/login" class="btn btn-login">Login</a>
+        <?php else: ?>
+            <a href="admin" class="btn btn-login">Panel Admina</a>
+            <form method="post" action="admin/logout" style="display:inline;">
+                <button type="submit" class="btn btn-login">Wyloguj</button>
+            </form>
+        <?php endif; ?>
 
-<form method="get" action="/search" id="searchForm" class="search-form">
-    <div class="row-top">
-        <input class="q" type="text" name="q" placeholder="Nazwa" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+        <a href="favorites" class="btn btn-fav">Ulubione</a>
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌙</button>
+    </div>
+</header>
 
-        <div class="actions">
-            <button type="submit">Szukaj</button>
-            <button type="button" onclick="copyUrl()">Kopiuj link</button>
-            <a class="reset" href="/search">Usuń filtry</a>
+<?php
+$vType = $_GET['type'] ?? '';
+$vCat  = $_GET['category'] ?? '';
+$vPlat = $_GET['platform'] ?? '';
+$vLang = $_GET['language'] ?? '';
+$sortValue = $_GET['sort'] ?? 'relevance';
+
+$hasAnyFilter =
+        !empty($_GET['q']) ||
+        !empty($vCat) ||
+        !empty($vType) ||
+        !empty($vPlat) ||
+        !empty($vLang) ||
+        (isset($_GET['minrating']) && $_GET['minrating'] !== '') ||
+        (isset($_GET['maxrating']) && $_GET['maxrating'] !== '') ||
+        (!empty($_GET['sort']) && $_GET['sort'] !== 'relevance');
+?>
+
+<div class="search-redesign-container">
+    <form method="get" action="search" id="searchForm">
+        <div class="search-top-row">
+            <input
+                    class="new-search-input"
+                    type="text"
+                    name="q"
+                    placeholder="Nazwa..."
+                    value="<?= htmlspecialchars($_GET['q'] ?? '') ?>"
+            />
+
+            <!-- Typ -->
+            <div class="pf-select" data-name="type">
+                <button type="button" class="pf-select__btn">Typ</button>
+                <select name="type" class="pf-select__native" aria-label="Typ">
+                    <option value="" <?= $vType==='' ? 'selected' : '' ?>>Typ</option>
+                    <option value="film" <?= $vType==='film' ? 'selected' : '' ?>>Film</option>
+                    <option value="series" <?= $vType==='series' ? 'selected' : '' ?>>Serial</option>
+                </select>
+            </div>
+
+            <!-- Gatunki -->
+            <div class="pf-select" data-name="category">
+                <button type="button" class="pf-select__btn">Gatunki</button>
+                <select name="category" class="pf-select__native" aria-label="Gatunki">
+                    <option value="" <?= $vCat==='' ? 'selected' : '' ?>>Gatunki</option>
+                    <?php foreach (($allCategories ?? []) as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat) ?>" <?= ($vCat === $cat) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Platformy -->
+            <div class="pf-select" data-name="platform">
+                <button type="button" class="pf-select__btn">Platformy</button>
+                <select name="platform" class="pf-select__native" aria-label="Platformy">
+                    <option value="" <?= $vPlat==='' ? 'selected' : '' ?>>Platformy</option>
+                    <?php foreach (($allPlatforms ?? []) as $p): ?>
+                        <option value="<?= htmlspecialchars($p) ?>" <?= ($vPlat === $p) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($p) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Języki -->
+            <div class="pf-select" data-name="language">
+                <button type="button" class="pf-select__btn">Języki</button>
+                <select name="language" class="pf-select__native" aria-label="Języki">
+                    <option value="" <?= $vLang==='' ? 'selected' : '' ?>>Języki</option>
+                    <?php foreach (($allLanguages ?? []) as $l): ?>
+                        <option value="<?= htmlspecialchars($l) ?>" <?= ($vLang === $l) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($l) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <input
+                    class="rating-input-style"
+                    type="number"
+                    step="0.1"
+                    name="minrating"
+                    placeholder="Ocena min..."
+                    value="<?= htmlspecialchars($_GET['minrating'] ?? '') ?>"
+                    aria-label="Ocena min"
+            />
+
+            <input
+                    class="rating-input-style"
+                    type="number"
+                    step="0.1"
+                    name="maxrating"
+                    placeholder="Ocena max..."
+                    value="<?= htmlspecialchars($_GET['maxrating'] ?? '') ?>"
+                    aria-label="Ocena max"
+            />
+
+            <!-- right overlay area: icons + search (search always visible) -->
+            <div class="search-right">
+                <?php if ($hasAnyFilter): ?>
+                    <a class="icon-btn" href="search" aria-label="Wyczyść filtry" title="Wyczyść filtry">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                            <path d="M12 5a7 7 0 1 1-6.32 4H3l3.5-3.5L10 9H7.76A5 5 0 1 0 12 7c1.13 0 2.18.37 3.03 1l1.42-1.42A6.97 6.97 0 0 0 12 5z"
+                                  fill="currentColor"/>
+                        </svg>
+                    </a>
+
+                    <button class="icon-btn" type="button" id="copyLinkBtn" aria-label="Kopiuj link" title="Kopiuj link">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                            <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z"
+                                  fill="currentColor"/>
+                        </svg>
+                    </button>
+                <?php endif; ?>
+
+                <button class="icon-btn" type="submit" aria-label="Search" title="Szukaj">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                        <path d="M10 2a8 8 0 1 1 5.29 14l4.2 4.2-1.4 1.4-4.2-4.2A8 8 0 0 1 10 2zm0 2a6 6 0 1 0 0 12a6 6 0 0 0 0-12z"
+                              fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+
+            <select class="filter-btn-style" name="sort" aria-label="Sortowanie" style="display:none;">
+                <option value="relevance" <?= ($sortValue === 'relevance') ? 'selected' : '' ?>>Domyślnie</option>
+                <option value="ratingdesc" <?= ($sortValue === 'ratingdesc') ? 'selected' : '' ?>>Ocena malejąco</option>
+                <option value="ratingasc" <?= ($sortValue === 'ratingasc') ? 'selected' : '' ?>>Ocena rosnąco</option>
+                <option value="nameasc" <?= ($sortValue === 'nameasc') ? 'selected' : '' ?>>Nazwa A–Z</option>
+                <option value="namedesc" <?= ($sortValue === 'namedesc') ? 'selected' : '' ?>>Nazwa Z–A</option>
+            </select>
         </div>
-    </div>
 
-    <div class="row-filters">
-        <select name="category">
-    <option value="">Wszystkie kategorie</option>
-
-    <?php foreach (($allCategories ?? []) as $cat): ?>
-        <?php $selected = (isset($_GET['category']) && $_GET['category'] === $cat) ? 'selected' : ''; ?>
-                <option value="<?= htmlspecialchars($cat) ?>" <?= $selected ?>>
-                <?= htmlspecialchars($cat) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="type">
-            <option value="">Wszystkie</option>
-            <option value="film" <?= (isset($_GET['type']) && $_GET['type']=='film') ? 'selected' : '' ?>>Film</option>
-            <option value="series" <?= (isset($_GET['type']) && $_GET['type']=='series') ? 'selected' : '' ?>>Serial</option>
-        </select>
-
-        <select name="platform">
-        <option value="">Wszystkie platformy</option>
-
-        <?php foreach (($allPlatforms ?? []) as $p): ?>
-            <?php $selected = (isset($_GET['platform']) && $_GET['platform'] === $p) ? 'selected' : ''; ?>
-                <option value="<?= htmlspecialchars($p) ?>" <?= $selected ?>>
-                <?= htmlspecialchars($p) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-
-        <select name="language">
-        <option value="">Wszystkie języki</option>
-
-            <?php foreach (($allLanguages ?? []) as $l): ?>
-                <?php $selected = (isset($_GET['language']) && $_GET['language'] === $l) ? 'selected' : ''; ?>
-                <option value="<?= htmlspecialchars($l) ?>" <?= $selected ?>>
-                <?= htmlspecialchars($l) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <?php $sortValue = $_GET['sort'] ?? 'relevance'; ?>
-        <select name="sort">
-            <option value="relevance" <?= $sortValue==='relevance' ? 'selected' : '' ?>>Domyślnie</option>
-            <option value="rating_desc" <?= $sortValue==='rating_desc' ? 'selected' : '' ?>>Ocena: malejąco</option>
-            <option value="rating_asc" <?= $sortValue==='rating_asc' ? 'selected' : '' ?>>Ocena: rosnąco</option>
-            <option value="name_asc" <?= $sortValue==='name_asc' ? 'selected' : '' ?>>Nazwa: A–Z</option>
-            <option value="name_desc" <?= $sortValue==='name_desc' ? 'selected' : '' ?>>Nazwa: Z–A</option>
-        </select>
-
-        <input type="number" step="0.1" name="min_rating" placeholder="min ocena" value="<?= htmlspecialchars($_GET['min_rating'] ?? '') ?>">
-        <input type="number" step="0.1" name="max_rating" placeholder="max ocena" value="<?= htmlspecialchars($_GET['max_rating'] ?? '') ?>">
-    </div>
-</form>
-
-<script>
-    const form = document.getElementById('searchForm');
-    // Auto-apply filters (NOT the text q)
-    form.querySelectorAll('.row-filters select, .row-filters input[type="number"]').forEach(el => {
-        el.addEventListener('change', () => form.submit());
-    });
-
-    function copyUrl() {
-        navigator.clipboard.writeText(window.location.href);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Получаем список ID из localStorage
-        const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
-
-        if (favorites.length > 0) {
-            // 2. Ищем все ссылки на фильмы на странице
-            document.querySelectorAll('.title-link[data-id]').forEach(link => {
-                const currentId = link.getAttribute('data-id');
-
-                // 3. Если ID фильма есть в массиве избранного
-                if (favorites.includes(currentId)) {
-                    // Находим место для иконки внутри текущей карточки
-                    const placeholder = link.querySelector('.fav-icon-placeholder');
-                    if (placeholder) {
-                        // Вставляем некликабельную иконку
-                        placeholder.innerHTML = '<span class="favorite-indicator" title="Ulubione">❤️</span>';
-                    }
-                }
-            });
-        }
-    });
-</script>
+        <!-- second row inside the gray panel -->
+        <div class="pf-panel-row" id="pfPanelRow" aria-label="Filter options row"></div>
+    </form>
+</div>
 
 <?php if (!empty($errors)): ?>
-    <div class="error-box">
-        <?php foreach ($errors as $e): ?>
-            <div><?= htmlspecialchars($e) ?></div>
-        <?php endforeach; ?>
+    <div class="search-redesign-container">
+        <div class="error-box">
+            <?php foreach ($errors as $e): ?>
+                <div><?= htmlspecialchars($e) ?></div>
+            <?php endforeach; ?>
+        </div>
     </div>
 <?php endif; ?>
 
 <?php if (!empty($results)): ?>
-    <h2>Wyniki:</h2>
-    <?php foreach ($results as $title): ?>
-        <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link" data-id="<?= (int)$title['id'] ?>">
-            <div class="title">
-                <strong>
-                    <?= htmlspecialchars($title['name']) ?>
-                    <span class="fav-icon-placeholder"></span>
-                </strong>
-                <div class="type">
-                    <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?> | Kategorie: <?= htmlspecialchars($title['categories']) ?>
-                </div>
-                <p><?= htmlspecialchars($title['description']) ?></p>
-            </div>
-        </a>
-    <?php endforeach; ?>
+    <div class="container" style="padding-top:20px;">
+        <div class="movie-grid">
+            <?php foreach ($results as $t): ?>
+                <a href="title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
+                    <div class="card-img" style="background-image: url('<?= !empty($t['imagepath']) ? htmlspecialchars($t['imagepath']) : 'https://via.placeholder.com/300x450' ?>');">
+                        <div class="rating"><span>★</span> <?= number_format((float)($t['average_rating'] ?? 0), 1) ?>/5</div>
+                    </div>
+
+                    <div class="card-info">
+                        <span class="card-name"><?= htmlspecialchars($t['name'] ?? '') ?></span>
+
+                        <div class="badges-container">
+                            <div class="badge-list">
+                                <?php
+                                if (!empty($t['categories'])) {
+                                    $tags = explode(',', $t['categories']);
+                                    foreach (array_slice($tags, 0, 2) as $tag) {
+                                        echo '<span class="badge">' . htmlspecialchars(trim($tag)) . '</span>';
+                                    }
+                                }
+                                ?>
+                            </div>
+
+                            <div class="badge-list">
+                                <span class="badge">Eng</span>
+                                <span class="badge">Pl</span>
+                                <span class="badge">Rus</span>
+                            </div>
+
+                            <div class="badge-list">
+                                <span class="badge">Disney+</span>
+                                <span class="badge">Netflix</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
 <?php else: ?>
-    <?php
-    $hasAnyFilter =
-            (!empty($_GET['q'])) ||
-            (!empty($_GET['category'])) ||
-            (!empty($_GET['type'])) ||
-            (!empty($_GET['platform'])) ||
-            (!empty($_GET['language'])) ||
-            (isset($_GET['min_rating']) && $_GET['min_rating'] !== '') ||
-            (isset($_GET['max_rating']) && $_GET['max_rating'] !== '') ||
-            (!empty($_GET['sort']) && $_GET['sort'] !== 'relevance');
-    ?>
     <?php if ($hasAnyFilter && empty($errors)): ?>
-        <p>Brak wyników.</p>
+        <div class="search-redesign-container">
+            <p style="opacity:.85;">Brak wyników.</p>
+        </div>
     <?php endif; ?>
 <?php endif; ?>
 
+<script>
+    const form = document.getElementById('searchForm');
+
+    // auto apply rating only
+    form.querySelectorAll('input[type="number"]').forEach(el => {
+        el.addEventListener('change', () => form.submit());
+    });
+
+    // Copy link button (only exists when filters are active)
+    (function () {
+        const btn = document.getElementById('copyLinkBtn');
+        if (!btn) return;
+
+        btn.addEventListener('click', async () => {
+            try{
+                await navigator.clipboard.writeText(window.location.href);
+                btn.style.opacity = '0.7';
+                setTimeout(() => btn.style.opacity = '1', 600);
+            }catch(e){
+                const ta = document.createElement('textarea');
+                ta.value = window.location.href;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                btn.style.opacity = '0.7';
+                setTimeout(() => btn.style.opacity = '1', 600);
+            }
+        });
+    })();
+
+    // Favorites marker
+    function checkFavorites() {
+        const favorites = JSON.parse(localStorage.getItem('plusflixfavorites') || '[]');
+        document.querySelectorAll('.card[data-id]').forEach(link => {
+            const currentId = link.getAttribute('data-id');
+            if (favorites.includes(currentId)) {
+                const titleSpan = link.querySelector('.card-name');
+                if (titleSpan && !titleSpan.innerHTML.includes('♥')) {
+                    titleSpan.innerHTML = '♥ ' + titleSpan.innerHTML;
+                }
+            }
+        });
+    }
+    window.onload = checkFavorites;
+
+    // Theme toggle + icon
+    (function () {
+        const key = 'plusflix-theme';
+        const btn = document.getElementById('themeToggle');
+
+        function syncIcon() {
+            if (!btn) return;
+            btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        }
+
+        const saved = localStorage.getItem(key);
+        if (saved === 'light') document.body.classList.add('light-mode');
+        syncIcon();
+
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                localStorage.setItem(key, document.body.classList.contains('light-mode') ? 'light' : 'dark');
+                syncIcon();
+            });
+        }
+    })();
+
+    // Figma-like filters: open options in second row inside gray panel
+    (function () {
+        const panel = document.getElementById('pfPanelRow');
+
+        function setActiveBtnState() {
+            document.querySelectorAll('.pf-select').forEach(wrap => {
+                const native = wrap.querySelector('.pf-select__native');
+                wrap.classList.toggle('is-active', (native.value || '') !== '');
+            });
+        }
+
+        function buildOptionsFromNative(nativeSelect) {
+            return Array.from(nativeSelect.options).map(o => ({
+                value: o.value,
+                text: o.text
+            }));
+        }
+
+        function closePanel() {
+            panel.classList.remove('is-open');
+            panel.dataset.openFor = '';
+            panel.innerHTML = '';
+        }
+
+        function openPanelFor(selectWrap) {
+            const native = selectWrap.querySelector('.pf-select__native');
+            const options = buildOptionsFromNative(native);
+
+            panel.innerHTML = '';
+            panel.classList.add('is-open');
+            panel.dataset.openFor = selectWrap.dataset.name || '';
+
+            options.forEach(opt => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'pf-panel-opt' + ((native.value === opt.value) ? ' is-selected' : '');
+                b.textContent = opt.text;
+
+                b.addEventListener('click', () => {
+                    native.value = opt.value;
+                    setActiveBtnState();
+                    closePanel();
+                    form.submit();
+                });
+
+                panel.appendChild(b);
+            });
+        }
+
+        // init from GET
+        setActiveBtnState();
+
+        // top buttons
+        document.querySelectorAll('.pf-select').forEach(wrap => {
+            const btn = wrap.querySelector('.pf-select__btn');
+
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const name = wrap.dataset.name || '';
+
+                if (panel.classList.contains('is-open') && panel.dataset.openFor === name) {
+                    closePanel();
+                    return;
+                }
+                openPanelFor(wrap);
+            });
+        });
+
+        // close on outside click / ESC
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-redesign-container')) closePanel();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePanel();
+        });
+    })();
+</script>
+
 </body>
 </html>
-
-
