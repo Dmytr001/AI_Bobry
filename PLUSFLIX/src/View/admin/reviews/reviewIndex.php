@@ -1,61 +1,72 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <title>Admin – Oceny</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Ocene</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <?php $active = 'reviews'; require __DIR__ . '/../partials/nav.php'; ?>
+<body class="admin-page">
 
-  <h1>Oceny / Recenzje (Admin)</h1>
+<?php require __DIR__ . '/../../partials/topbar.php'; ?>
+<?php $active = 'reviews'; require __DIR__ . '/../partials/nav.php'; ?>
 
-  <form method="get" action="/admin/reviews" style="margin: 12px 0;">
+<h1 class="admin-title">Ocene: szukaj</h1>
+
+<form class="admin-toolbar admin-toolbar--reviews" method="get" action="/admin/reviews">
     <input type="text" name="q" placeholder="Szukaj po treści..." value="<?= htmlspecialchars($q ?? '') ?>">
-    <input type="text" name="title_id" placeholder="title_id" value="<?= htmlspecialchars($titleId ?? '') ?>" style="width:90px;">
-    <input type="text" name="rating" placeholder="rating" value="<?= htmlspecialchars($rating ?? '') ?>" style="width:90px;">
-    <button type="submit">Szukaj</button>
+    <input type="text" name="title_id" placeholder="title_id" value="<?= htmlspecialchars($titleId ?? '') ?>">
+    <input type="text" name="rating" placeholder="rating" value="<?= htmlspecialchars($rating ?? '') ?>">
+    <button class="admin-tool-btn" type="submit">Szukaj</button>
 
     <?php if (!empty($q) || !empty($titleId) || !empty($rating)): ?>
-      <a href="/admin/reviews">Wyczyść</a>
+        <a class="admin-tool-link" href="/admin/reviews">Wyczyść</a>
     <?php endif; ?>
-  </form>
+</form>
 
-  <?php if (empty($reviews)): ?>
-    <p>Brak wyników.</p>
-  <?php else: ?>
-    <table border="1" cellpadding="6" cellspacing="0">
-      <thead>
+<?php if (empty($reviews)): ?>
+    <p class="admin-muted">Brak wyników.</p>
+<?php else: ?>
+    <table class="admin-table">
+        <thead>
         <tr>
-          <th>ID</th>
-          <th>tytuł</th>
-          <th>rating</th>
-          <th>treść</th>
-          <th>data</th>
-          <th>akcje</th>
+            <th>ID</th>
+            <th>Tytuł</th>
+            <th>Rating</th>
+            <th>Treść</th>
+            <th>Data</th>
+            <th>Akcje</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <?php foreach ($reviews as $r): ?>
-          <tr>
-            <td><?= (int)$r['id'] ?></td>
-            <td><?= htmlspecialchars($r['title_name'] ?? '') ?>
-            <br>
-            <small style="color:gray;">(ID: <?= (int)$r['title_id'] ?>)</small></td>
-            <td><?= htmlspecialchars((string)$r['rating']) ?></td>
-            <td style="max-width:520px;">
-              <?= htmlspecialchars((string)$r['content']) ?>
-            </td>
-            <td><?= htmlspecialchars((string)$r['created_at']) ?></td>
-            <td>
-              <form method="post" action="/admin/reviews/delete" onsubmit="return confirm('Usunąć tę ocenę?');" style="display:inline;">
-                <input type="hidden" name="id" value="<?= (int)$r['id'] ?>">
-                <button type="submit">Usuń</button>
-              </form>
-            </td>
-          </tr>
+            <tr>
+                <td><?= (int)($r['id'] ?? 0) ?></td>
+                <td>
+                    <?= htmlspecialchars($r['title_name'] ?? 'Brak tytułu') ?><br>
+
+                    <?php $tid = (int)($r['title_id'] ?? 0); ?>
+                    <small class="admin-muted">
+                        <?= $tid ? ('ID: ' . $tid) : '' ?>
+                    </small>
+                </td>
+
+                <td><?= htmlspecialchars((string)($r['rating'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($r['content'] ?? '')) ?></td>
+                <td><?= htmlspecialchars((string)($r['created_at'] ?? '')) ?></td>
+                <td class="admin-table__actions">
+                    <form method="post" action="/admin/reviews/delete"
+                          onsubmit="return confirm('Usunąć tę ocenę?')" style="display:inline;">
+                        <input type="hidden" name="id" value="<?= (int)($r['id'] ?? 0) ?>">
+                        <button class="admin-small-danger" type="submit">Usuń</button>
+                    </form>
+                </td>
+            </tr>
         <?php endforeach; ?>
-      </tbody>
+        </tbody>
     </table>
-  <?php endif; ?>
+<?php endif; ?>
+
+</main></div>
 </body>
 </html>

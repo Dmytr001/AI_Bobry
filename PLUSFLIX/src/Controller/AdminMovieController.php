@@ -12,10 +12,13 @@ class AdminMovieController
     private function requireAdmin(): void
     {
         if (empty($_SESSION['admin_id'])) {
-            header('Location: /admin/login');
+            $return = $_SERVER['REQUEST_URI'] ?? '/admin/movies';
+            header('Location: /admin/login?overlay=1&return=' . urlencode($return));
             exit;
         }
     }
+
+
 
     private function getAllCategories(PDO $pdo): array
     {

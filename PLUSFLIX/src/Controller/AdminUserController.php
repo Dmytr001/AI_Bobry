@@ -12,10 +12,13 @@ class AdminUserController
     private function requireAdmin(): void
     {
         if (empty($_SESSION['admin_id'])) {
-            header('Location: /admin/login');
+            $return = $_SERVER['REQUEST_URI'] ?? '/admin/admins/create';
+            header('Location: /admin/login?overlay=1&return=' . urlencode($return));
             exit;
         }
     }
+
+
 
     public function createForm(): void
     {

@@ -1,43 +1,41 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <title>Admin – Dodaj administratora</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Dodaj admina</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="admin-page">
 
-<?php $active = 'movies'; require __DIR__ . '/../partials/nav.php'; ?>
+<?php require __DIR__ . '/../../partials/topbar.php'; ?>
+<?php $active = 'admins'; require __DIR__ . '/../partials/nav.php'; ?>
 
-<h1>Dodaj administratora</h1>
+<h1 class="admin-title">Użytkownik: dodaj</h1>
 
 <?php if (!empty($error)): ?>
-  <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+    <div class="admin-alert"><?= htmlspecialchars($error) ?></div>
 <?php endif; ?>
 
 <?php if (!empty($success)): ?>
-  <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+    <div class="admin-alert admin-alert--ok"><?= htmlspecialchars($success) ?></div>
 <?php endif; ?>
 
-<form method="post" action="/admin/admins/create">
-  <div>
-    <label>Login *</label><br>
+<form class="admin-form" method="post" action="/admin/admins/create">
+    <label class="admin-label">Login</label>
     <input type="text" name="login" required>
-  </div>
-  <br>
-  <div>
-    <label>Hasło *</label><br>
+
+    <label class="admin-label">Hasło</label>
     <input type="text" name="password" required>
-  </div>
-  <br>
-  <div>
-    <label>Email *</label><br>
+
+    <label class="admin-label">Email</label>
     <input type="email" name="email" required>
-  </div>
-  <br>
-  <button type="submit">Utwórz admina</button>
+
+    <div class="admin-actions">
+        <button class="admin-primary-btn" type="submit">Zatwierdzić</button>
+    </div>
 </form>
 
-<p><a href="/admin/movies">← Wróć do panelu</a></p>
-
+</main></div>
 </body>
 </html>

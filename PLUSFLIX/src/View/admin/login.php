@@ -1,31 +1,48 @@
 <!doctype html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <title>Logowanie administratora</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin login</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-  <h1>Logowanie administratora</h1>
 
-  <?php if (!empty($error)): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-  <?php endif; ?>
+<?php
+$return = $return ?? ($_GET['return'] ?? '/admin/movies');
+$overlay = ($overlay ?? (($_GET['overlay'] ?? '0') === '1'));
+?>
 
-  <form method="post" action="/admin/login">
-    <div>
-      <label>Imię / login</label><br>
-      <input type="text" name="login" required>
+<body class="admin-login-overlay-page">
+
+
+<div class="admin-login-backdrop"></div>
+
+<div class="admin-login-wrap" role="dialog" aria-modal="true">
+    <div class="admin-login-card admin-login-anim">
+
+        <?php if (!empty($error)): ?>
+            <div class="admin-login-error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form class="admin-login-form" method="post" action="/admin/login">
+            <input type="hidden" name="return" value="<?= htmlspecialchars($return) ?>">
+
+            <input class="admin-login-input" type="text" name="login" placeholder="Imię" required>
+            <input class="admin-login-input" type="password" name="password" placeholder="Hasło" required>
+
+            <button class="admin-login-btn" type="submit">Login</button>
+            <a class="admin-login-back" href="/">Powrót</a>
+
+        </form>
+
     </div>
-    <br>
-    <div>
-      <label>Hasło</label><br>
-      <input type="password" name="password" required>
-    </div>
-    <br>
-    <button type="submit">Login</button>
-  </form>
+</div>
 
-  <p><a href="/">Powrót</a></p>
+<script>
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') window.location.href = '/';
+
+    });
+</script>
 </body>
 </html>
-
