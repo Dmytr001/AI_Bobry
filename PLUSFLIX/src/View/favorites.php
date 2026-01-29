@@ -1,243 +1,191 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
-    <title>Moje Ulubione – PLUSFLIX</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLUSFLIX – Twoje Ulubione</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* БАЗОВЫЕ СТИЛИ */
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            margin: 0;
-            background-color: #000;
-            color: #fff;
+        /* Ukrywamy karty domyślnie - JS je pokaże tylko jeśli są w localStorage */
+        .card {
+            display: none;
         }
 
-        header.header-1 {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            /* Измени второе число (сейчас там 24px) */
-            padding: 24px 64px 24px 64px;
-            width: 100%;
-            height: 63px;
-            background: #000000;
-            box-sizing: border-box;
-            position: sticky;
-            top: 0;
-            z-index: 999;
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 100px 20px;
+            color: var(--theme-text);
         }
 
-        /* LOGO */
-        .logo-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            text-decoration: none;
-            width: 304px;
+        .section-header-fav {
+            margin: 40px 0 20px 0;
         }
-
-        .logo-rect {
-            width: 34px;
-            height: 37px;
-            background: url('logo.png') no-repeat center; /* Сюда подгружай файл */
-            background-size: contain;
-            background-color: #878787; /* Заглушка */
-            margin-right: 10px;
-            flex-shrink: 0;
-        }
-        .logo-text {
-            font-weight: 900;
-            font-size: 32px;
-            line-height: 110%;
-            letter-spacing: -0.03em;
-            color: #FFFFFF;
-            text-transform: uppercase;
-        }
-
-        /* SEARCH BAR (Точно 405x36) */
-        .search-container {
-            width: 405px;
-            height: 36px;
-            background: #D9D9D9;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-        }
-        .search-input {
-            background: transparent;
-            border: none;
-            width: 100%;
-            font-family: 'Inter';
-            font-weight: 500;
-            font-size: 16px;
-            color: #000;
-            outline: none;
-        }
-
-        /* NAV GROUP */
-        .nav-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 14px;
-        }
-
-        /* Кнопки 102x32 */
-        .btn-figma {
-            width: 102px;
-            height: 32px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-family: 'Inter';
-            font-weight: 500;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            background: #878787;
-            color: #fff;
-        }
-
-        /* Переключатель темы (Component 6) */
-        .theme-toggle-btn {
-            width: 27px;
-            height: 26px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            position: relative;
-        }
-        .theme-circle-white {
-            position: absolute;
-            width: 20px;
-            height: 19px;
-            background: #FFFFFF;
-            border-radius: 50%;
-            left: 4px;
-            top: 3px;
-        }
-        .theme-circle-black {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: #000000;
-            border-radius: 50%;
-            left: 2px;
-            top: 3px;
-        }
-
-        /* КОНТЕНТ */
-        .content-body { padding: 40px 64px; }
-        .title-page { font-size: 32px; font-weight: 900; margin-bottom: 24px; }
-
-        /* Твои старые стили для карточек (без изменений) */
-        .title-link { text-decoration: none; color: inherit; display: none; }
-        .title { border-bottom: 1px solid #333; margin-bottom: 15px; padding: 15px; }
-        .type { font-size: 0.9em; color: #878787; }
-        .favorite-indicator { color: #e74c3c; margin-left: 8px; }
-        .empty-state { display: none; padding: 40px; border: 2px dashed #333; text-align: center; color: #666; }
     </style>
 </head>
+
 <body>
 
-<header class="header-1">
-    <a href="/" class="logo-group">
-        <div class="logo-rect"></div>
-        <span class="logo-text">PLUSFLIX</span>
-    </a>
+    <header class="navbar">
+        <a href="/" class="logo-link" aria-label="PLUSFLIX">
+            <img src="/images/logo.png" alt="PLUSFLIX" class="logo-img">
+            <span class="logo-text">PLUSFLIX</span>
+        </a>
 
-    <div class="search-container">
-        <form action="/search" method="get" style="width: 100%; display: flex;">
-            <input type="text" name="q" class="search-input" placeholder="Wyszukiwanie…">
-        </form>
-    </div>
+        <div class="nav-actions">
+            <input type="text" class="search-input" placeholder="Wyszukiwanie...">
+            <?php if (empty($_SESSION['admin_id'])): ?>
+                <a href="/admin/login" class="btn btn-login">Login</a>
+            <?php else: ?>
+                <a href="/admin" class="btn btn-login">Panel Admina</a>
+            <?php endif; ?>
+            <a href="/" class="btn btn-fav">Strona Główna</a>
+            <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
+        </div>
+    </header>
 
-    <nav class="nav-group">
-        <?php if (empty($_SESSION['admin_id'])): ?>
-            <a href="/admin/login" class="btn-figma">Login</a>
-        <?php else: ?>
-            <a href="/admin" class="btn-figma" style="width: auto; padding: 0 10px;">Admin</a>
-            <form method="post" action="/admin/logout" style="display:inline;">
-                <button type="submit" class="btn-figma" style="margin-left: 5px;">Logout</button>
-            </form>
-        <?php endif; ?>
+    <div class="container">
 
-        <button class="theme-toggle-btn" onclick="toggleTheme()">
-            <div class="theme-circle-white">
-                <div class="theme-circle-black"></div>
-            </div>
-        </button>
-    </nav>
-</header>
+        <div class="section-header-fav">
+            <h2 class="section-title">Twoje <span>Ulubione</span> ❤️</h2>
+        </div>
 
-<div class="content-body">
-    <h1 class="title-page">Twoje Ulubione ❤️</h1>
+        <div id="favoritesGrid" class="movie-grid">
+            <?php if (!empty($results)): ?>
+                <?php foreach ($results as $t): ?>
+                    <a href="/title?id=<?= (int) $t['id'] ?>" class="card" data-id="<?= (int) $t['id'] ?>">
 
-    <?php if (!empty($_SESSION['admin_login'])): ?>
-        <p style="color: #878787; font-size: 14px; margin-top: -20px; margin-bottom: 20px;">
-            Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login']) ?>
-        </p>
-    <?php endif; ?>
+                        <?php
+                        $img = !empty($t['imagepath']) ? $t['imagepath'] : 'https://via.placeholder.com/300x450';
+                        // Wymuszamy ścieżkę od katalogu głównego
+                        if (!str_starts_with($img, 'http') && !str_starts_with($img, '/')) {
+                            $img = '/' . $img;
+                        }
+                        ?>
 
-    <div id="favoritesList">
-        <?php if (!empty($results)): ?>
-            <?php foreach ($results as $title): ?>
-                <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link" data-id="<?= (int)$title['id'] ?>">
-                    <div class="title">
-                        <strong>
-                            <?= htmlspecialchars($title['name']) ?>
-                            <span class="favorite-indicator">❤️</span>
-                        </strong>
-                        <div class="type">
-                            <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?>
+                        <div class="card-img" style="background-image: url('<?= htmlspecialchars($img) ?>')">
+                            <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
                         </div>
-                        <p><?= htmlspecialchars($title['description']) ?></p>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        <?php endif; ?>
+
+                        <div class="card-info">
+                            <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
+
+                            <div class="badges-container">
+                                <div class="badge-list">
+                                    <?php
+                                    if (!empty($t['categories'])):
+                                        $tags = explode(',', $t['categories']);
+                                        foreach (array_slice($tags, 0, 2) as $tag): ?>
+                                            <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
+                                        <?php endforeach;
+                                    endif; ?>
+                                </div>
+                                <div class="badge-list">
+                                    <span class="badge">Eng</span>
+                                    <span class="badge">Pl</span>
+                                </div>
+                                <div class="badge-list">
+                                    <span class="badge">Disney+</span>
+                                    <span class="badge">Netflix</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
 
         <div id="noFavorites" class="empty-state">
-            <p>Twoja lista ulubionych jest obecnie pusta.</p>
-            <a href="/search" class="search-container" style="text-decoration: none;">
-                <span class="search-input" style="display: flex; align-items: center;">Wyszukiwanie…</span>
-            </a>
+            <h2>Twoja lista jest pusta</h2>
+            <p style="margin-bottom: 20px;">Nie dodałeś jeszcze żadnych filmów do ulubionych.</p>
+            <a href="/search" class="btn-hero">Szukaj filmów</a>
+        </div>
+
     </div>
-</div>
 
-<script>
-    // ТВОЙ ОРИГИНАЛЬНЫЙ СКРИПТ (БЕЗ ИЗМЕНЕНИЙ)
-    document.addEventListener('DOMContentLoaded', () => {
-        const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
-        const cards = document.querySelectorAll('.title-link');
-        let count = 0;
+    <footer class="footer">
+        <div class="footer-col">
+            <h3 class="logo" style="color: white;">Namely</h3>
+            <p>Descriptive line about what your company does.</p>
+            <div class="social-icons">
+                <span>📷</span>
+                <span>🔗</span>
+                <span>✖</span>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Features</h4>
+            <ul>
+                <li>Core features</li>
+                <li>Pro experience</li>
+                <li>Integrations</li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Learn more</h4>
+            <ul>
+                <li>Blog</li>
+                <li>Case studies</li>
+                <li>Best practices</li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h4>Support</h4>
+            <ul>
+                <li>Contact</li>
+                <li>Support</li>
+                <li>Legal</li>
+            </ul>
+        </div>
+    </footer>
 
-        cards.forEach(card => {
-            const id = card.getAttribute('data-id');
-            if (favorites.includes(id)) {
-                card.style.display = 'block';
-                count++;
+    <script>
+        // Logika sprawdzania ulubionych z localStorage
+        function loadFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+            const cards = document.querySelectorAll('.card[data-id]');
+            let found = 0;
+
+            cards.forEach(card => {
+                const currentId = card.getAttribute('data-id');
+                if (favorites.includes(currentId)) {
+                    card.style.display = 'flex';
+                    found++;
+                }
+            });
+
+            if (found === 0) {
+                document.getElementById('noFavorites').style.display = 'block';
             }
-        });
-
-        if (count === 0) {
-            document.getElementById('noFavorites').style.display = 'block';
         }
-    });
 
-    // Функция переключения темы (только визуал)
-    function toggleTheme() {
-        const isDark = document.body.style.backgroundColor === 'white';
-        document.body.style.backgroundColor = isDark ? 'black' : 'white';
-        document.body.style.color = isDark ? 'white' : 'black';
-    }
-</script>
+        window.onload = loadFavorites;
+
+        // Theme toggle (kopiuj-wklej z Twojego home.php)
+        (function () {
+            const key = 'plusflix-theme';
+            const btn = document.getElementById('themeToggle');
+
+            function syncIcon() {
+                if (!btn) return;
+                btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+            }
+
+            const saved = localStorage.getItem(key);
+            if (saved === 'light') document.body.classList.add('light-mode');
+            syncIcon();
+
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    document.body.classList.toggle('light-mode');
+                    localStorage.setItem(key, document.body.classList.contains('light-mode') ? 'light' : 'dark');
+                    syncIcon();
+                });
+            }
+        })();
+    </script>
 
 </body>
+
 </html>
