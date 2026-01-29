@@ -1262,3 +1262,98 @@ body.admin-login-overlay-page{ background:#000; }
     font-size: 14px !important;
     margin-top: 2px !important;
 }
+.empty-state{
+    padding:40px;
+    border:2px dashed #333;
+    border-radius:18px;
+    text-align:center;
+    color:#cfcfcf;
+    max-width:720px;
+    margin:30px auto 0;
+}
+.pf-footer{
+    background:#000;
+    border-top:1px solid rgba(255,255,255,0.08);
+    padding:90px 0;                 /* full width */
+    color:#fff;
+    width:100%;
+}
+
+/* внутренний контейнер футера */
+.pf-footer__inner{
+    max-width:1600px;               /* шире, как на макете */
+    margin:0 auto;
+    padding:0 90px;                 /* большие поля слева/справа */
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:140px;                      /* большой разрыв между левым блоком и колонками */
+}
+
+.pf-footer__brand{ max-width:520px; }
+
+.pf-footer__logo{
+    font-size:46px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.pf-footer__desc{
+    color:rgba(255,255,255,0.45);
+    font-size:22px;
+    line-height:1.6;
+    margin-bottom:44px;
+}
+
+.pf-footer__social{
+    display:flex;
+    gap:28px;
+    align-items:center;
+}
+
+.pf-footer__icon{
+    width:46px;
+    height:46px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#ff0000;
+    font-weight:900;
+    font-size:22px;
+}
+
+/* правые колонки */
+.pf-footer__cols{
+    display:flex;
+    gap:120px;                      /* как на 2-м скрине */
+    align-items:flex-start;
+}
+
+.pf-footer__title{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:22px;
+}
+
+.pf-footer__link{
+    display:block;
+    text-decoration:none;
+    color:rgba(255,255,255,0.35);
+    font-size:20px;
+    line-height:1.95;
+    margin:6px 0;
+}
+
+.pf-footer__link:hover{ color:rgba(255,255,255,0.65); }
+
+@media (max-width: 1000px){
+    .pf-footer__inner{ padding:0 20px; flex-direction:column; gap:50px; }
+    .pf-footer__cols{ gap:60px; flex-wrap:wrap; }
+}
+.pf-footer__icon .pf-ico{
+    width:26px;
+    height:26px;
+    fill: currentColor;   /* наследует красный из .pf-footer__icon */
+    display:block;
+}

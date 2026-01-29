@@ -1,243 +1,166 @@
+<?php $results = $results ?? []; ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moje Ulubione – PLUSFLIX</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;900&display=swap" rel="stylesheet">
-    <style>
-        /* БАЗОВЫЕ СТИЛИ */
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            margin: 0;
-            background-color: #000;
-            color: #fff;
-        }
-
-        header.header-1 {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            /* Измени второе число (сейчас там 24px) */
-            padding: 24px 64px 24px 64px;
-            width: 100%;
-            height: 63px;
-            background: #000000;
-            box-sizing: border-box;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-
-        /* LOGO */
-        .logo-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            text-decoration: none;
-            width: 304px;
-        }
-
-        .logo-rect {
-            width: 34px;
-            height: 37px;
-            background: url('logo.png') no-repeat center; /* Сюда подгружай файл */
-            background-size: contain;
-            background-color: #878787; /* Заглушка */
-            margin-right: 10px;
-            flex-shrink: 0;
-        }
-        .logo-text {
-            font-weight: 900;
-            font-size: 32px;
-            line-height: 110%;
-            letter-spacing: -0.03em;
-            color: #FFFFFF;
-            text-transform: uppercase;
-        }
-
-        /* SEARCH BAR (Точно 405x36) */
-        .search-container {
-            width: 405px;
-            height: 36px;
-            background: #D9D9D9;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-        }
-        .search-input {
-            background: transparent;
-            border: none;
-            width: 100%;
-            font-family: 'Inter';
-            font-weight: 500;
-            font-size: 16px;
-            color: #000;
-            outline: none;
-        }
-
-        /* NAV GROUP */
-        .nav-group {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 14px;
-        }
-
-        /* Кнопки 102x32 */
-        .btn-figma {
-            width: 102px;
-            height: 32px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-family: 'Inter';
-            font-weight: 500;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            background: #878787;
-            color: #fff;
-        }
-
-        /* Переключатель темы (Component 6) */
-        .theme-toggle-btn {
-            width: 27px;
-            height: 26px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            position: relative;
-        }
-        .theme-circle-white {
-            position: absolute;
-            width: 20px;
-            height: 19px;
-            background: #FFFFFF;
-            border-radius: 50%;
-            left: 4px;
-            top: 3px;
-        }
-        .theme-circle-black {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: #000000;
-            border-radius: 50%;
-            left: 2px;
-            top: 3px;
-        }
-
-        /* КОНТЕНТ */
-        .content-body { padding: 40px 64px; }
-        .title-page { font-size: 32px; font-weight: 900; margin-bottom: 24px; }
-
-        /* Твои старые стили для карточек (без изменений) */
-        .title-link { text-decoration: none; color: inherit; display: none; }
-        .title { border-bottom: 1px solid #333; margin-bottom: 15px; padding: 15px; }
-        .type { font-size: 0.9em; color: #878787; }
-        .favorite-indicator { color: #e74c3c; margin-left: 8px; }
-        .empty-state { display: none; padding: 40px; border: 2px dashed #333; text-align: center; color: #666; }
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
-<header class="header-1">
-    <a href="/" class="logo-group">
-        <div class="logo-rect"></div>
+<header class="navbar">
+    <a href="/" class="logo-link" aria-label="PLUSFLIX">
+        <img src="/images/logo.png" alt="PLUSFLIX" class="logo-img">
         <span class="logo-text">PLUSFLIX</span>
     </a>
 
-    <div class="search-container">
-        <form action="/search" method="get" style="width: 100%; display: flex;">
-            <input type="text" name="q" class="search-input" placeholder="Wyszukiwanie…">
-        </form>
-    </div>
+    <div class="nav-actions">
+        <input type="text" class="search-input" placeholder="Wyszukiwanie..." disabled>
 
-    <nav class="nav-group">
         <?php if (empty($_SESSION['admin_id'])): ?>
-            <a href="/admin/login" class="btn-figma">Login</a>
+            <a href="/admin/login" class="btn btn-login">Login</a>
         <?php else: ?>
-            <a href="/admin" class="btn-figma" style="width: auto; padding: 0 10px;">Admin</a>
-            <form method="post" action="/admin/logout" style="display:inline;">
-                <button type="submit" class="btn-figma" style="margin-left: 5px;">Logout</button>
-            </form>
+            <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
 
-        <button class="theme-toggle-btn" onclick="toggleTheme()">
-            <div class="theme-circle-white">
-                <div class="theme-circle-black"></div>
-            </div>
-        </button>
-    </nav>
+        <a href="/favorites" class="btn btn-fav">Ulubione</a>
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
+    </div>
 </header>
 
-<div class="content-body">
-    <h1 class="title-page">Twoje Ulubione ❤️</h1>
+<div class="container">
 
-    <?php if (!empty($_SESSION['admin_login'])): ?>
-        <p style="color: #878787; font-size: 14px; margin-top: -20px; margin-bottom: 20px;">
-            Zalogowano jako: <?= htmlspecialchars($_SESSION['admin_login']) ?>
-        </p>
-    <?php endif; ?>
+    <div id="favoritesGrid" class="movie-grid">
+        <?php foreach ($results as $t): ?>
+            <a href="/title?id=<?= (int)$t['id'] ?>" class="card fav-card" data-id="<?= (int)$t['id'] ?>" style="display:none;">
+                <div class="card-img"
+                     style="background-image: url('<?= !empty($t['imagepath']) ? htmlspecialchars($t['imagepath']) : 'https://via.placeholder.com/300x450' ?>');">
+                    <div class="rating"><span>★</span> <?= number_format((float)($t['average_rating'] ?? 0), 1) ?>/5</div>
+                </div>
 
-    <div id="favoritesList">
-        <?php if (!empty($results)): ?>
-            <?php foreach ($results as $title): ?>
-                <a href="/title?id=<?= (int)$title['id'] ?>" class="title-link" data-id="<?= (int)$title['id'] ?>">
-                    <div class="title">
-                        <strong>
-                            <?= htmlspecialchars($title['name']) ?>
-                            <span class="favorite-indicator">❤️</span>
-                        </strong>
-                        <div class="type">
-                            <?= htmlspecialchars($title['type']) ?> | ⭐ <?= htmlspecialchars($title['average_rating']) ?>
+
+                <div class="card-info">
+                    <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
+
+                    <div class="badges-container">
+                        <div class="badge-list">
+                            <?php
+                            if (!empty($t['categories'])):
+                                $tags = array_map('trim', explode(',', $t['categories']));
+                                foreach (array_slice($tags, 0, 2) as $tag):
+                                    ?>
+                                    <span class="badge"><?= htmlspecialchars($tag) ?></span>
+                                <?php endforeach; endif; ?>
                         </div>
-                        <p><?= htmlspecialchars($title['description']) ?></p>
-                    </div>
-                </a>
-            <?php endforeach; ?>
-        <?php endif; ?>
 
-        <div id="noFavorites" class="empty-state">
-            <p>Twoja lista ulubionych jest obecnie pusta.</p>
-            <a href="/search" class="search-container" style="text-decoration: none;">
-                <span class="search-input" style="display: flex; align-items: center;">Wyszukiwanie…</span>
+                        <div class="badge-list">
+                            <span class="badge">Eng</span>
+                            <span class="badge">Pl</span>
+                            <span class="badge">Rus</span>
+                        </div>
+
+                        <div class="badge-list">
+                            <span class="badge">Disney+</span>
+                            <span class="badge">Netflix</span>
+                        </div>
+                    </div>
+                </div>
             </a>
+        <?php endforeach; ?>
+    </div>
+
+    <div id="noFavorites" class="empty-state" style="display:none;">
+        <p>Twoja lista ulubionych jest obecnie pusta.</p>
+        <a href="/search" class="btn btn-fav" style="display:inline-flex;">Przejdź do wyszukiwania</a>
     </div>
 </div>
 
 <script>
-    // ТВОЙ ОРИГИНАЛЬНЫЙ СКРИПТ (БЕЗ ИЗМЕНЕНИЙ)
+    // показываем только избранные
     document.addEventListener('DOMContentLoaded', () => {
         const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
-        const cards = document.querySelectorAll('.title-link');
+        const cards = document.querySelectorAll('.fav-card');
         let count = 0;
 
         cards.forEach(card => {
             const id = card.getAttribute('data-id');
             if (favorites.includes(id)) {
-                card.style.display = 'block';
+                card.style.display = 'flex';
                 count++;
             }
         });
 
-        if (count === 0) {
-            document.getElementById('noFavorites').style.display = 'block';
-        }
+        if (count === 0) document.getElementById('noFavorites').style.display = 'block';
     });
 
-    // Функция переключения темы (только визуал)
-    function toggleTheme() {
-        const isDark = document.body.style.backgroundColor === 'white';
-        document.body.style.backgroundColor = isDark ? 'black' : 'white';
-        document.body.style.color = isDark ? 'white' : 'black';
-    }
+    // тот же theme toggle, что на главной
+    (function () {
+        const key = 'plusflix-theme';
+        const btn = document.getElementById('themeToggle');
+
+        function syncIcon() {
+            if (!btn) return;
+            btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        }
+
+        const saved = localStorage.getItem(key);
+        if (saved === 'light') document.body.classList.add('light-mode');
+        syncIcon();
+
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                localStorage.setItem(key, document.body.classList.contains('light-mode') ? 'light' : 'dark');
+                syncIcon();
+            });
+        }
+    })();
 </script>
+<footer class="pf-footer">
+    <div class="pf-footer__inner">
+        <div class="pf-footer__brand">
+            <div class="pf-footer__logo">Namely</div>
+            <div class="pf-footer__desc">Descriptive line about what your company does.</div>
+
+            <div class="pf-footer__social">
+                <a class="pf-footer__icon" href="#" aria-label="Instagram">
+                    <svg class="pf-ico" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+                    </svg>
+                </a>
+
+                <a class="pf-footer__icon" href="#" aria-label="LinkedIn">in</a>
+                <a class="pf-footer__icon" href="#" aria-label="X">X</a>
+            </div>
+        </div>
+
+        <div class="pf-footer__cols">
+            <div class="pf-footer__col">
+                <div class="pf-footer__title">Features</div>
+                <a class="pf-footer__link" href="#">Core features</a>
+                <a class="pf-footer__link" href="#">Pro experience</a>
+                <a class="pf-footer__link" href="#">Integrations</a>
+            </div>
+
+            <div class="pf-footer__col">
+                <div class="pf-footer__title">Learn more</div>
+                <a class="pf-footer__link" href="#">Blog</a>
+                <a class="pf-footer__link" href="#">Case studies</a>
+                <a class="pf-footer__link" href="#">Customer stories</a>
+                <a class="pf-footer__link" href="#">Best practices</a>
+            </div>
+
+            <div class="pf-footer__col">
+                <div class="pf-footer__title">Support</div>
+                <a class="pf-footer__link" href="#">Contact</a>
+                <a class="pf-footer__link" href="#">Support</a>
+                <a class="pf-footer__link" href="#">Legal</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
 </body>
 </html>

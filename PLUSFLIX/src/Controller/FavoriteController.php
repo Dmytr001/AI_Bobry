@@ -19,5 +19,6 @@ class FavoriteController
 
         // Подключаем View. Проверь путь к папке View!
         require __DIR__ . '/../View/favorites.php';
+
     }
 }
