@@ -14,26 +14,54 @@
         <span class="logo-text">PLUSFLIX</span>
     </a>
 
-    <div class="nav-actions">
+    <div class="search-wrapper">
+        <form action="/search" method="get" class="search-form">
+            <div class="search-container-inner">
+                <input type="text" name="q" class="search-input-active" placeholder="Wyszukiwanie...">
 
-        <input type="text" class="search-input" placeholder="Wyszukiwanie...">
+                <input type="hidden" name="type" value="">
+                <input type="hidden" name="category" value="">
+                <input type="hidden" name="platform" value="">
+                <input type="hidden" name="language" value="">
+                <input type="hidden" name="minrating" value="">
+                <input type="hidden" name="maxrating" value="">
+                <input type="hidden" name="sort" value="relevance">
+
+                <button type="submit" class="search-submit-btn" aria-label="Szukaj">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="nav-actions">
         <?php if (empty($_SESSION['admin_id'])): ?>
-            <a href="/admin/login" class="btn btn-login">Login</a>
+            <a href="javascript:void(0)" onclick="openLoginModal()" class="btn btn-login">Login</a>
         <?php else: ?>
             <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
+
         <a href="/favorites" class="btn btn-fav">Ulubione</a>
         <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
-
     </div>
 </header>
 
-<section class="hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/Interstellar.jpg') center/cover;">
-    <p style="color: #ff0000; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">
-        Rozpocznij wyszukiwanie
-    </p>
-    <h1>Znajdź idealny film na dziś</h1>
-    <a href="/search" class="btn-hero">Rozpocznij wyszukiwanie</a>
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-subtitle" style="color: #ff0000">Rozpocznij wyszukiwanie</p>
+        <h1 class="hero-title">Znajdź idealny film na dziś</h1>
+        <a href="/search" class="btn-hero">
+            Rozpocznij wyszukiwanie
+
+            <svg class="icon-search" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </a>
+    </div>
 </section>
 
 <div class="container">
@@ -45,30 +73,93 @@
                 <a href="/title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
                     <div class="card-img" style="background-image: url('<?= !empty($t['image_path']) ? htmlspecialchars($t['image_path']) : 'https://via.placeholder.com/300x450' ?>')">
                         <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
-                    </div>
-                    
+                        <div class="fav-badge" title="Ulubione">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>                    </div>
+
                     <div class="card-info">
                         <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
                         <p class="card-desc"><?= htmlspecialchars($t['description']) ?></p>
-                        
-                        <div class="badges-container">
-                            <div class="badge-list">
-                                <?php 
-                                if(!empty($t['categories'])):
-                                    $tags = explode(',', $t['categories']);
-                                    foreach(array_slice($tags, 0, 2) as $tag): ?>
-                                        <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
-                                    <?php endforeach; 
-                                endif; ?>
-                            </div>
-                            <div class="badge-list">
-                                <span class="badge">Eng</span>
-                                <span class="badge">Pl</span>
-                            </div>
-                            <div class="badge-list">
-                                <span class="badge">Disney+</span>
-                                <span class="badge">Netflix</span>
-                            </div>
+
+                        <div class="badges-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: auto;">
+
+                            <?php if (!empty($t['categories'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice(array_map('trim', explode(',', $t['categories'])), 0, 3) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars($tag) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['languages_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['languages_list'], 0, 3) as $lang): ?>
+                                        <span class="badge"><?= htmlspecialchars($lang) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['platforms_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['platforms_list'], 0, 3) as $plat): ?>
+                                        <span class="badge color-platform"><?= htmlspecialchars($plat) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($trendyTitles)): ?>
+            <h2 class="section-title">Trendy tygodnia 🔥</h2>
+        <div class="movie-grid">
+            <?php foreach ($trendyTitles as $t): ?>
+                <a href="/title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
+                    <div class="card-img" style="background-image: url('<?= !empty($t['image_path']) ? htmlspecialchars($t['image_path']) : 'https://via.placeholder.com/300x450' ?>')">
+                        <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
+                        <div class="fav-badge" title="Ulubione">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="card-info">
+                        <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
+                        <p class="card-desc"><?= htmlspecialchars($t['description']) ?></p>
+
+                        <div class="badges-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: auto;">
+
+                            <?php if (!empty($t['categories'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice(array_map('trim', explode(',', $t['categories'])), 0, 3) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars($tag) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['languages_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['languages_list'], 0, 3) as $lang): ?>
+                                        <span class="badge"><?= htmlspecialchars($lang) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['platforms_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['platforms_list'], 0, 3) as $plat): ?>
+                                        <span class="badge color-platform"><?= htmlspecialchars($plat) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </a>
@@ -83,30 +174,43 @@
                 <a href="/title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
                     <div class="card-img" style="background-image: url('<?= !empty($t['image_path']) ? htmlspecialchars($t['image_path']) : 'https://via.placeholder.com/300x450' ?>')">
                         <div class="rating"><span>★</span> <?= number_format($t['average_rating'], 1) ?>/5</div>
+                        <div class="fav-badge" title="Ulubione">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
                     </div>
                     
                     <div class="card-info">
                         <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
                         <p class="card-desc"><?= htmlspecialchars($t['description']) ?></p>
-                        
-                        <div class="badges-container">
-                            <div class="badge-list">
-                                <?php 
-                                if(!empty($t['categories'])):
-                                    $tags = explode(',', $t['categories']);
-                                    foreach(array_slice($tags, 0, 2) as $tag): ?>
-                                        <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
-                                    <?php endforeach; 
-                                endif; ?>
-                            </div>
-                            <div class="badge-list">
-                                <span class="badge">Eng</span>
-                                <span class="badge">Pl</span>
-                            </div>
-                            <div class="badge-list">
-                                <span class="badge">Disney+</span>
-                                <span class="badge">Netflix</span>
-                            </div>
+
+                        <div class="badges-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: auto;">
+
+                            <?php if (!empty($t['categories'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice(array_map('trim', explode(',', $t['categories'])), 0, 3) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars($tag) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['languages_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['languages_list'], 0, 3) as $lang): ?>
+                                        <span class="badge"><?= htmlspecialchars($lang) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($t['platforms_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['platforms_list'], 0, 3) as $plat): ?>
+                                        <span class="badge color-platform"><?= htmlspecialchars($plat) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </a>
@@ -119,19 +223,25 @@
 <script>
     function checkFavorites() {
         const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
-        document.querySelectorAll('.card[data-id]').forEach(link => {
-            const currentId = link.getAttribute('data-id');
-            if (favorites.includes(currentId)) {
-                const titleSpan = link.querySelector('.card-name');
-                if (titleSpan && !titleSpan.innerHTML.includes('❤️')) {
-                    titleSpan.innerHTML += ' ❤️';
+
+        document.querySelectorAll('.card[data-id]').forEach(card => {
+            const currentId = card.getAttribute('data-id');
+            const favBadge = card.querySelector('.fav-badge');
+
+            if (favBadge) {
+                // Если ID фильма есть в массиве избранного — показываем красный квадрат
+                if (favorites.includes(currentId)) {
+                    favBadge.style.display = 'flex';
+                } else {
+                    favBadge.style.display = 'none';
                 }
             }
         });
     }
-    window.onload = checkFavorites;
-</script>
-<script>
+
+    // Запуск при загрузке страницы
+    window.addEventListener('load', checkFavorites);
+
     (function () {
         const key = 'plusflix-theme';
         const btn = document.getElementById('themeToggle');
@@ -153,6 +263,62 @@
             });
         }
     })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('ajaxLoginForm');
+        const errorDiv = document.getElementById('loginError');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Останавливаем перезагрузку страницы
+
+                errorDiv.style.display = 'none'; // Скрываем прошлые ошибки
+                const formData = new FormData(this);
+
+                // Отправляем данные на ваш существующий обработчик
+                fetch('/admin/login', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Помечаем запрос как AJAX
+                    }
+                })
+                    .then(response => {
+                        // Если сервер сделал редирект (код 302), Fetch сам пойдет по нему
+                        // Если URL изменился на /admin..., значит вход успешен
+                        if (response.url.includes('/admin') && !response.url.includes('login')) {
+                            window.location.href = response.url; // Переходим в админку
+                        } else {
+                            // Если мы остались на странице логина — значит данные неверны
+                            showError("Błędny login lub hasło");
+                        }
+                    })
+                    .catch(error => {
+                        showError("Błąd połączenia z serwerem");
+                    });
+            });
+        }
+
+        function showError(text) {
+            errorDiv.textContent = text;
+            errorDiv.style.display = 'block';
+            // Легкая тряска окна при ошибке
+            const card = document.querySelector('.admin-login-card');
+            card.style.animation = 'none';
+            card.offsetHeight; /* trigger reflow */
+            card.style.animation = 'shake 0.4s';
+        }
+    });
+
+    // Функции открытия и закрытия
+    function openLoginModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
 </script>
 
 <footer class="pf-footer">
@@ -198,5 +364,22 @@
         </div>
     </div>
 </footer>
+
+<div id="loginModal" class="admin-login-backdrop">
+    <div class="admin-login-card admin-login-anim">
+        <button class="admin-login-close" onclick="closeLoginModal()">&times;</button>
+        <h2 class="admin-login-title">Admin Login</h2>
+
+        <div id="loginError"></div>
+
+        <form id="ajaxLoginForm">
+            <input type="hidden" name="return" value="/admin/movies">
+            <input class="admin-login-input" type="text" name="login" placeholder="Imię" required>
+            <input class="admin-login-input" type="password" name="password" placeholder="Hasło" required>
+            <button class="admin-login-btn" type="submit">Login</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

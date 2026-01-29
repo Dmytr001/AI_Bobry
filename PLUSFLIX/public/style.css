@@ -51,7 +51,7 @@ body{
 .logo-img{ height:28px; width:auto; display:block; }
 
 .logo-text{
-    color:var(--primary-red);
+    color: #ffffff;
     font-size:24px;
     font-weight:900;
     letter-spacing:1px;
@@ -116,11 +116,11 @@ body{
     text-align:center;
 }
 
-.hero h1{
+/*.hero h1{
     font-size:3.5rem;
     margin-bottom:30px;
     max-width:800px;
-}
+}*/
 
 .btn-hero{
     background-color:var(--primary-red);
@@ -137,8 +137,9 @@ body{
 .container{ padding:20px 60px; }
 
 .section-title{
-    font-size:32px;
-    margin-bottom:40px;
+    font-size:48px;
+    margin-top:64px;
+    margin-bottom:42px;
     text-align:center;
 }
 .section-title span{ color:var(--primary-red); }
@@ -188,7 +189,7 @@ body{
 .rating span{ color:#ffcc00; }
 
 .card-info{
-    padding:14px 16px;
+    padding:14px 16px 16px 16px;
     flex-grow:1;
     display:flex;
     flex-direction:column;
@@ -254,7 +255,6 @@ body.search-page .search-top-row{
 
     /* место справа под столбец кнопок */
     padding-right:110px;
-    min-height:108px;
 }
 
 body.search-page .new-search-input{
@@ -361,7 +361,7 @@ body.search-page .search-right{
     top:50%;
     transform:translateY(-50%);
     display:flex;
-    flex-direction:column;
+    flex-direction:row;
     gap:10px;
     align-items:center;
     z-index:5;
@@ -582,7 +582,7 @@ body.admin-page{
 .admin-logout{ margin-top:12px; }
 .admin-logout__btn{
     width:100%;
-    background: var(--primary-red);
+    background: #000000;
     color:#fff;
     border:none;
     border-radius:12px;
@@ -1254,7 +1254,7 @@ body.admin-login-overlay-page{ background:#000; }
 
 .admin-login-btn{
     padding: 12px 14px !important;
-    font-size: 22px !important;
+    font-size: 18px !important;
     border-radius: 14px !important;
 }
 
@@ -1271,6 +1271,383 @@ body.admin-login-overlay-page{ background:#000; }
     max-width:720px;
     margin:30px auto 0;
 }
+.pf-footer{
+    background: var(--theme-bg);
+    border-top:1px solid var(--theme-text);
+    padding:90px 0;                 /* full width */
+    color:var(--theme-text);
+    width:100%;
+}
+
+/* внутренний контейнер футера */
+.pf-footer__inner{
+    max-width:1600px;               /* шире, как на макете */
+    margin:0 auto;
+    padding:0 90px;                 /* большие поля слева/справа */
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:140px;                      /* большой разрыв между левым блоком и колонками */
+}
+
+.pf-footer__brand{ max-width:520px; }
+
+.pf-footer__logo{
+    font-size:46px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.pf-footer__desc{
+    color:var(--theme-text);
+    font-size:22px;
+    line-height:1.6;
+    margin-bottom:44px;
+}
+
+.pf-footer__social{
+    display:flex;
+    gap:28px;
+    align-items:center;
+}
+
+.pf-footer__icon{
+    width:46px;
+    height:46px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    color:#ff0000;
+    font-weight:900;
+    font-size:22px;
+}
+
+/* правые колонки */
+.pf-footer__cols{
+    display:flex;
+    gap:120px;                      /* как на 2-м скрине */
+    align-items:flex-start;
+}
+
+.pf-footer__title{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:22px;
+}
+
+.pf-footer__link{
+    display:block;
+    text-decoration:none;
+    color:var(--theme-text);
+    font-size:20px;
+    line-height:1.95;
+    margin:6px 0;
+}
+
+.pf-footer__link:hover{ color:rgba(255,255,255,0.65); }
+
+@media (max-width: 1000px){
+    .pf-footer__inner{ padding:0 20px; flex-direction:column; gap:50px; }
+    .pf-footer__cols{ gap:60px; flex-wrap:wrap; }
+}
+.pf-footer__icon .pf-ico{
+    width:26px;
+    height:26px;
+    fill: currentColor;   /* наследует красный из .pf-footer__icon */
+    display:block;
+}
+
+/*-----------------------------------------------------------------------------*/
+
+/* Основной контейнер хедера */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Распределяет блоки по краям и центру */
+    align-items: center;
+    padding: 0 64px; /* Твой отступ слева и справа */
+    height: 63px;
+    background: #000;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Левая часть (Лого) */
+.logo-link {
+    flex: 1; /* Занимает 1 часть пространства */
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+/* Центральная часть (Поиск) */
+.search-wrapper {
+    flex: 2; /* Занимает в два раза больше места, чтобы "держать" центр */
+    display: flex;
+    justify-content: center; /* Центрирует саму форму внутри враппера */
+}
+
+/* Правая часть (Кнопки) */
+.nav-actions {
+    flex: 1; /* Занимает 1 часть пространства (как и лого) */
+    display: flex;
+    justify-content: flex-end; /* Прижимает кнопки к правому краю */
+    align-items: center;
+    gap: 14px;
+}
+
+/* Стили формы из Figma */
+.search-container-inner {
+    width: 405px; /* Фиксированная ширина как в дизайне */
+    height: 36px;
+    background: #D9D9D9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 15px;
+    box-sizing: border-box;
+}
+
+.search-input-active {
+    background: transparent;
+    border: none;
+    width: 100%;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #000;
+}
+
+.search-submit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    display: flex;
+    padding: 0;
+}
+
+/*========================================*/
+
+/* Контейнер панели */
+body.search-page .search-redesign-container {
+    background: #8f8f8f;
+    border-radius: 18px;
+    margin: 20px 70px;
+    padding: 22px 24px;
+    position: relative;
+    z-index: 1;
+    /* Убираем overflow: visible, чтобы ничего не вылетало за границы */
+    overflow: hidden;
+}
+
+/* Строка с элементами */
+body.search-page .search-top-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    /* УДАЛЯЕМ padding-right: 110px, так как кнопки теперь в общем потоке */
+    padding-right: 0;
+    width: 100%;
+}
+
+/* Поле ввода названия - ТЕПЕРЬ ОНО ГИБКОЕ */
+body.search-page .new-search-input {
+    flex: 1; /* Занимает всё доступное пространство */
+    min-width: 200px; /* Чтобы не сжималось в ноль */
+    max-width: none; /* Убираем жесткий лимит 360px */
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: none;
+    background: #e6e6e6;
+    font-size: 16px;
+    color: #000;
+    font-weight: 500;
+}
+
+/* Поля рейтинга - чуть уменьшим, чтобы не теснили поиск */
+body.search-page .rating-input-style {
+    flex: 0 0 100px; /* Фиксированная ширина для инпутов рейтинга */
+    background: #e6e6e6;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Кнопки (очистка, копия, поиск) */
+body.search-page .icon-btn {
+    flex: 0 0 44px; /* Кнопки всегда квадратные 44px */
+    height: 44px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .12s ease;
+}
+
+/* Убираем абсолютное позиционирование для правой группы кнопок */
+/* Это решит проблему наезда и пустого места */
+body.search-page .search-right {
+    display: contents; /* Позволяет кнопкам внутри вести себя как прямые дети flex-контейнера */
+}
+
+body.search-page .rating-input-style {
+    width: 150px;
+    background: #e6e6e6;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    /* ИСПРАВЛЕНИЕ: меняем цвет на черный/темный */
+    color: #1a1a1a;
+}
+
+/* Убираем стандартные стрелочки (Spin Buttons) */
+/* Chrome, Safari, Edge, Opera */
+body.search-page .rating-input-style::-webkit-outer-spin-button,
+body.search-page .rating-input-style::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+body.search-page .rating-input-style[type=number] {
+    -moz-appearance: textfield;
+}
+
+/*==========================================*/
+
+
+/* Общие стили для светлой темы футера */
+.light-mode .pf-footer {
+    background: var(--theme-bg);
+    border-top: 1px solid rgba(0, 0, 0, 0.08); /* светлая граница */
+    color: #000;
+}
+
+/* Логотип в светлой теме */
+.light-mode .pf-footer__logo {
+    color: #000;
+}
+
+/* Описание в светлой теме */
+.light-mode .pf-footer__desc {
+    color: rgba(0, 0, 0, 0.6); /* темно-серый с прозрачностью */
+}
+
+/* Социальные иконки в светлой теме */
+.light-mode .pf-footer__icon {
+    color: #ff0000; /* красный остается */
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.light-mode .pf-footer__icon:hover {
+    background: rgba(0, 0, 0, 0.1); /* темнее при наведении */
+    transform: translateY(-2px);
+}
+
+/* Заголовки колонок в светлой теме */
+.light-mode .pf-footer__title {
+    color: #000;
+}
+
+/* Ссылки в светлой теме */
+.light-mode .pf-footer__link {
+    color: rgba(0, 0, 0, 0.5); /* серый цвет текста */
+    transition: color 0.2s ease;
+}
+
+.light-mode .pf-footer__link:hover {
+    color: rgba(0, 0, 0, 0.8); /* темнее при наведении */
+}
+
+/* SVG иконки в социальных кнопках */
+.light-mode .pf-footer__icon .pf-ico {
+    fill: currentColor;
+}
+
+/* Адаптивность для светлой темы */
+@media (max-width: 1000px) {
+    .light-mode .pf-footer__inner {
+        padding: 0 20px;
+    }
+}
+
+/* Дополнительные улучшения для светлой темы */
+.light-mode .pf-footer__cols {
+    position: relative;
+}
+
+/* Добавляем разделители между колонками для светлой темы */
+@media (min-width: 1001px) {
+    .light-mode .pf-footer__cols::before {
+        content: '';
+        position: absolute;
+        left: -60px;
+        top: 0;
+        height: 100%;
+        width: 1px;
+        background: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Эффект для логотипа в светлой теме */
+.light-mode .pf-footer__logo {
+    position: relative;
+    display: inline-block;
+}
+
+.light-mode .pf-footer__logo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #ff0000;
+    border-radius: 2px;
+}
+
+/*====================================================*/
+
+/* 1. Когда меню открыто: Красный фон, белый текст */
+.pf-select.is-menu-open .pf-select__btn {
+    background-color: #ff4d4d !important;
+    color: #fff !important;
+}
+
+/* 2. Когда значение выбрано (но меню закрыто): Красный текст, обычный фон */
+.pf-select.is-active .pf-select__btn {
+    color: #fff !important;
+    background-color: transparent; /* или исходный цвет фона */
+}
+
+body.search-page .pf-select.is-active .pf-select__btn{
+    background-color: #000 !important;
+
+}
+
+div#pfPanelRow {
+    padding-left: 24px;
+}
+
+.pf-footer{
+    margin-top: 64px;
+}
+
+/*========================================================================================*/
+
 .pf-footer{
     background:#000;
     border-top:1px solid rgba(255,255,255,0.08);
@@ -1356,4 +1733,911 @@ body.admin-login-overlay-page{ background:#000; }
     height:26px;
     fill: currentColor;   /* наследует красный из .pf-footer__icon */
     display:block;
+}
+
+/*=======================================================*/
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* Растягиваем на весь экран */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+
+    /* Высота теперь гибкая: минимум 594px, но растет при необходимости */
+    min-height: 90vh;
+    padding: 120px 0; /* Отступы сверху и снизу из Figma */
+
+    /* Фон */
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, #000000 100%),
+    url('hero.png') center/cover no-repeat;
+
+    background-attachment: scroll; /* Картинка движется вместе с текстом */
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Обязательно добавь это в начало CSS, чтобы убрать белые поля по бокам страницы */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Защита от горизонтальной прокрутки */
+}
+
+/* Контентная часть (текст) остается ограниченной, чтобы не разъезжаться слишком широко */
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 90%; /* Для мобильных */
+    max-width: 960px; /* Как в Figma */
+    text-align: center;
+}
+
+/* Главный заголовок делаем адаптивным, чтобы он не вылезал за края на малых экранах */
+.hero-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(48px, 8vw, 96px); /* Размер будет меняться от 48px до 96px в зависимости от экрана */
+    line-height: 110%;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.btn-hero {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px; /* Расстояние между иконкой и текстом */
+
+    width: 384px;
+    height: 50px;
+
+    background: #FF0000;
+    border-radius: 12px;
+    border: none;
+    text-decoration: none;
+
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: #FFFFFF;
+
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+/* Стили для самой иконки внутри кнопки */
+.icon-search {
+    flex-shrink: 0; /* Чтобы иконка не сжималась */
+    width: 20px;
+    height: 20px;
+    /* stroke: currentColor; — уже наследует белый цвет текста */
+}
+
+.btn-hero:hover {
+    background: #e60000;
+    transform: scale(1.02);
+}
+/*========================================================*/
+
+.btn-hero {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px; /* Расстояние между иконкой и текстом */
+
+    width: 384px;
+    height: 50px;
+
+    background: #FF0000;
+    border-radius: 12px;
+    border: none;
+    text-decoration: none;
+
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: #FFFFFF;
+
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+/* Стили для самой иконки внутри кнопки */
+.icon-search {
+    flex-shrink: 0; /* Чтобы иконка не сжималась */
+    width: 20px;
+    height: 20px;
+    /* stroke: currentColor; — уже наследует белый цвет текста */
+}
+
+.btn-hero:hover {
+    background: #e60000;
+    transform: scale(1.02);
+}
+
+/*===========================================*/
+.card-img {
+    position: relative;
+    overflow: hidden;
+    display: block; /* Гарантирует правильный расчет размеров */
+}
+
+/* Красный квадрат ИЗБРАННОГО - СЛЕВА ВЕРХУ */
+.fav-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px; /* Теперь зафиксировано в левом углу */
+
+    width: 34px;
+    height: 34px;
+    background-color: #000000;
+    border-radius: 8px;
+
+    display: none; /* Показывается через JS */
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+/* Плашка ОЦЕНКИ - СПРАВА ВЕРХУ (или оставь слева, но с отступом) */
+/* Чтобы они были "как бы на одной линии", но в разных углах: */
+.rating {
+    position: absolute;
+    top: 12px; /* Та же высота, что и у сердечка */
+    right: 12px; /* В ПРОТИВОПОЛОЖНОМ углу */
+
+    background: #000000; /* Темный непрозрачный фон */
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: auto; /* Запрещаем растягивание */
+    z-index: 5;
+    opacity: 1 !important; /* Убираем прозрачность */
+}
+
+.fav-badge svg {
+    fill: white;
+}
+
+/*====================*/
+
+/* Фон и контейнер модалки */
+.admin-login-backdrop {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Сама карточка окна */
+.admin-login-card {
+    background: #000000;
+    padding: 30px;
+    border-radius: 12px;
+    width: 320px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Заголовок */
+.admin-login-title {
+    color: white;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Поля ввода */
+.admin-login-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 6px;
+    color: #000000;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+.admin-login-input:focus {
+    outline: none;
+    border-color: #ff0000;
+}
+
+/* Кнопка входа */
+.admin-login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #ff0000;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 12px;
+}
+
+.admin-login-btn:hover {
+    background: #cc0000;
+}
+
+/* Кнопка закрытия (крестик) */
+.admin-login-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.admin-login-close:hover {
+    color: #fff;
+}
+
+/* Простая анимация появления */
+.admin-login-anim {
+    animation: fadeInModal 0.3s ease-out;
+}
+
+#loginError {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.1);
+    padding: 12px 20px; /* Увеличили отступы для лучшего вида */
+    border-radius: 15px; /* Большое закругление */
+    margin-bottom: 20px;
+    font-size: 14px;
+    display: none;
+    text-align: center;
+    border: 1.5px solid rgba(255, 77, 77, 0.5); /* Сделали рамку чуть мягче */
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/*======================================================*/
+
+.movie-hero {
+    display: flex;
+    align-items: flex-end; /* Контент прижат к низу героя */
+    width: 100vw;
+    min-height: 80vh; /* Занимает 80% высоты экрана */
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+
+    background-size: cover;
+    background-position: center 20%;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    padding-bottom: 50px;
+}
+
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 90%;
+    z-index: 2;
+}
+
+.hero-flex-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-end;
+}
+
+/* Постер в герое */
+.hero-poster-box {
+    flex-shrink: 0;
+    width: 280px;
+    position: relative;
+    display: none; /* На десктопах можно скрыть, если фон и так виден, но лучше оставить для стиля */
+}
+
+@media (min-width: 1024px) {
+    .hero-poster-box { display: block; }
+}
+
+.main-poster {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.rating-badge-hero {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    backdrop-filter: blur(5px);
+}
+
+/* Инфо-блок */
+.movie-title-large {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: 1.1;
+    color: #FFFFFF;
+    margin: 0 0 20px 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.type-tag-hero {
+    background: #FF0000;
+    padding: 4px 12px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.genre-pill-hero {
+    color: #ccc;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+.hero-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin-bottom: 30px;
+}
+
+/* Кнопка "Добавить в избранное" в стиле Hero */
+.btn-hero-fav {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: #878787;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.btn-hero-fav.active {
+    background: #FF0000;
+    border-color: #FF0000;
+}
+
+.btn-hero-fav:hover {
+    background: #6D6D6D;
+}
+
+/* Контейнер для нижних деталей */
+.title-container-v2 {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 5%;
+}
+
+/* Контейнер всей страницы */
+.title-container-v2 {
+    max-width: 1200px;
+    margin: -60px auto 40px; /* Немного налезаем на градиент Hero для красоты */
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Основная сетка: 2 колонки */
+.main-info-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr; /* Левая часть шире */
+    gap: 30px;
+    align-items: start;
+}
+
+/* Левый блок (Описание) */
+.grid-description {
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-title {
+    color: #ff0000;
+    margin-top: 0;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.movie-description-text {
+    font-size: 17px;
+    line-height: 1.8;
+    color: #e0e0e0;
+}
+
+/* Правая колонка (Sidebar) */
+.grid-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Расстояние между Платформами и Языками */
+}
+
+/* Карточки внутри сайдбара */
+.detail-group-card {
+    background: rgba(34, 34, 34, 0.8);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-group-card h3 {
+    margin-top: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #878787;
+    margin-bottom: 15px;
+}
+
+/* Платформы */
+.platform-grid-compact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.platform-pill {
+    background: #ffffff;
+    color: #000000;
+    padding: 8px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: transform 0.2s;
+}
+
+.platform-pill:hover {
+    transform: translateY(-2px);
+    background: #ff0000;
+    color: #fff;
+}
+
+/* Языки */
+.badge-row-compact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.badge-lang-pill {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Адаптивность для мобилок */
+@media (max-width: 900px) {
+    .main-info-grid {
+        grid-template-columns: 1fr; /* Схлопываем в одну колонку */
+    }
+    .title-container-v2 {
+        margin-top: 20px;
+    }
+}
+
+/* 1. Убираем отрицательный маржин, заменяем на обычный отступ */
+.title-container-v2 {
+    max-width: 1200px;
+    margin: 40px auto; /* Убрали -60px, поставили положительный отступ */
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* 2. Убедимся, что Hero-блок имеет минимальную высоту и внутренний отступ снизу */
+.movie-hero {
+    display: flex;
+    align-items: flex-end;
+    width: 100vw;
+    min-height: 70vh; /* Высота 70% экрана */
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* padding-bottom гарантирует, что текст внутри Hero
+       не прилипнет к самому низу и не столкнется с сеткой */
+    padding-bottom: 40px;
+    box-sizing: border-box;
+}
+
+/* 3. Очистка потока (на всякий случай) */
+.main-info-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 30px;
+    align-items: start;
+    clear: both; /* Очистка плавающих элементов */
+}
+
+/* Шапка внутри блока описания */
+.description-header-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Контейнер для отступов между тегами */
+.description-header-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+/* Стиль для типа контента (Film/Serial) — теперь более акцентный */
+.type-tag-pill {
+    background: #ff0000;
+    color: #fff;
+    padding: 10px 20px; /* Увеличили внутренние отступы */
+    border-radius: 10px;
+    font-weight: 800;   /* Жирнее */
+    font-size: 14px;    /* Крупнее */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); /* Добавили свечение */
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Стиль для жанров — теперь более читаемые и объемные */
+.genre-tag-pill {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;      /* Сделали текст светлее для контраста */
+    padding: 10px 20px;  /* Увеличили размер */
+    border-radius: 10px;
+    font-size: 15px;     /* Увеличили шрифт */
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px); /* Эффект матового стекла */
+}
+
+/* Эффект при наведении на жанр */
+.genre-tag-pill:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ff0000;
+    transform: translateY(-2px);
+    color: #ff0000;
+}
+
+/* Небольшая корректировка заголовка описания */
+.grid-title {
+    margin-top: 10px;
+    font-size: 1.6rem;
+    color: #fff; /* Можно оставить белым, если фон темный */
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    margin-bottom: 20px; /* Отступ от контента заголовка */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-back:hover {
+    background: rgba(0,0,0,0.7);
+}
+
+.btn-back svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-back:hover svg {
+    transform: scale(1.1);
+}
+
+/* На мобильных устройствах делаем кнопку чуть меньше */
+@media (max-width: 768px) {
+    .btn-back {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+}
+
+/*=======================================================*/
+
+/* Настраиваем контейнер, чтобы он работал как сетка для верхнего и нижнего ряда */
+.hero-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: inherit; /* берет высоту от movie-hero */
+    padding: 40px 20px;
+}
+
+/* Увеличиваем визуальный вес твоих существующих элементов */
+.movie-title-large {
+    font-size: 125px !important; /* Делаем очень крупным */
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    max-width: 50vw;
+}
+
+.rating-badge-hero {
+    background: #000000 !important; /* Черный фон */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    position: static;
+}
+
+/* Кнопка назад (которую мы добавили ранее) */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Кнопка "Добавить в избранное" */
+.btn-hero-fav {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px; /* Чуть увеличили ширину для солидности */
+    background: #FF0000; /* Изначально красная */
+    border: none;
+    border-radius: 12px;
+    color: white; /* Текст белый */
+    font-size: 18px; /* Текст побольше */
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+}
+
+/* Эффект при наведении на красную кнопку */
+.btn-hero-fav:hover {
+    background: #e60000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
+}
+
+/* Активное состояние (уже в избранном) — серая или черная */
+.btn-hero-fav.active {
+    background: #2b2b2b; /* Темно-серый/черный */
+    color: #fff;
+    box-shadow: none;
+}
+
+/* Наводка на активную кнопку — становится светлее */
+.btn-hero-fav.active:hover {
+    background: #454545; /* Становится светлее */
+}
+
+/* Иконка внутри кнопки */
+#favIcon {
+    font-size: 20px;
+}
+
+.platform-pill {
+    background: #ff0000; /* Теперь изначально красная */
+    color: #ffffff; /* Текст белый */
+    padding: 12px 24px; /* Увеличили размер кнопки */
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px; /* Увеличили размер текста */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+}
+
+.platform-pill:hover {
+    transform: translateY(-3px);
+    background: #ffffff; /* При наводке становится белой */
+    color: #000000; /* Текст становится черным */
+    border-color: #ffffff;
+    box-shadow: 0 6px 18px rgba(255, 255, 255, 0.2);
+}
+
+.badge-lang-pill {
+    background: rgba(255, 255, 255, 0.08);
+    color: #eeeeee;
+    /* Увеличили отступы: теперь они заметнее, но все еще меньше платформ */
+    padding: 8px 16px;
+    border-radius: 10px;
+    /* Шрифт 14px (был 13px, у платформ теперь 16px) */
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.section-title-red{
+    margin-top: 0px;
+}
+
+/*==========================================================================*/
+.rating-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрирует содержимое по горизонтали */
+    justify-content: center;
+    gap: 12px;
+    margin: 12px 0 40px 0; /* Добавили отступов сверху и снизу для простора */
+    width: 100%; /* Растягиваем на всю ширину для корректного центра */
+}
+
+.rating-label {
+    font-weight: 700;
+    color: #888;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.star-rating-action {
+    display: flex;
+    flex-direction: row-reverse; /* Меняем порядок для удобства CSS-селекторов */
+    gap: 10px;
+    font-size: 64px; /* Увеличен размер в 2 раза */
+    cursor: pointer;
+    line-height: 1;
+}
+
+.star-clickable {
+    color: #333; /* Более глубокий темный цвет для неактивных */
+    transition: color 0.2s, transform 0.2s, text-shadow 0.2s;
+}
+
+/* Логика наведения при row-reverse: подсвечиваем наведенную и все ПРАВЫЕ (визуально левые) */
+.star-clickable:hover,
+.star-clickable:hover ~ .star-clickable {
+    color: #ffcc00;
+    text-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+}
+
+.star-clickable:active {
+    transform: scale(0.85);
+}
+
+/*===========================================*/
+
+.star-rating-modal {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+    font-size: 40px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.star-modal-item {
+    color: #444;
+    transition: color 0.2s;
+}
+
+/* Ховер: подсвечиваем звезды при наведении */
+.star-modal-item:hover,
+.star-modal-item:hover ~ .star-modal-item {
+    color: #ffcc00;
+}
+
+/* ФИКСАЦИЯ: подсвечиваем звезды на основе выбранного значения (через JS добавляем класс .selected) */
+.star-modal-item.selected,
+.star-modal-item.selected ~ .star-modal-item {
+    color: #ffcc00;
+}
+
+/*=======================*/
+.badge-row-fill {
+    display: flex;
+    flex-direction: row; /* Строго в линию */
+    gap: 4px;            /* Минимальный зазор между тегами */
+    width: 100%;
+}
+
+.badge-row-fill .badge {
+    flex: 1;             /* ГЛАВНОЕ: каждый тег занимает равную долю (1/2, 1/3 и т.д.) */
+    min-width: 0;        /* Помогает избежать распирания контейнера длинным текстом */
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Если текст слишком длинный, он аккуратно обрежется точками */
+
+    background: var(--primary-red);
+    padding: 6px 4px;
+    border-radius: 8px;
+    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }

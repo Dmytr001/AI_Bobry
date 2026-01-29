@@ -28,9 +28,6 @@ $login = $_SESSION['adminlogin'] ?? '';
                 <button type="submit" class="admin-logout__btn">Logout</button>
             </form>
 
-            <div class="admin-user">
-                Zalogowano jako: <strong><?= htmlspecialchars($login) ?></strong>
-            </div>
         </div>
     </aside>
 

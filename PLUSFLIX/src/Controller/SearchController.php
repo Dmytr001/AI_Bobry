@@ -42,6 +42,31 @@ private function db(): PDO
         return $cats;
     }
 
+    private function attachMetadata(PDO $pdo, array &$results): void
+    {
+        if (empty($results)) return;
+        $ids = array_map(fn($r) => (int)$r['id'], $results);
+        $placeholders = implode(',', $ids);
+
+        $langRows = $pdo->query("
+        SELECT tl.title_id, l.name FROM title_languages tl
+        JOIN languages l ON tl.language_id = l.id
+        WHERE tl.title_id IN ($placeholders)
+    ")->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+
+        $platRows = $pdo->query("
+        SELECT tp.title_id, p.name FROM title_platforms tp
+        JOIN platforms p ON tp.platform_id = p.id
+        WHERE tp.title_id IN ($placeholders)
+    ")->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_ASSOC);
+
+        foreach ($results as &$title) {
+            $id = $title['id'];
+            $title['languages_list'] = isset($langRows[$id]) ? array_column($langRows[$id], 'name') : [];
+            $title['platforms_list'] = isset($platRows[$id]) ? array_column($platRows[$id], 'name') : [];
+        }
+    }
+
     public function index()
     {
         $errors = [];
@@ -98,7 +123,6 @@ private function db(): PDO
         $results = [];
 
         if (empty($errors)) {
-            // Всегда показываем результаты, даже если q пустое и фильтры пустые
             $results = Title::search(
                 $query ?: null,
                 $category ?: null,
@@ -109,8 +133,10 @@ private function db(): PDO
                 $language ?: null,
                 $sort
             );
-        }
 
+            // Добавляем эту строчку
+            $this->attachMetadata($pdo, $results);
+        }
 
         require __DIR__ . '/../View/search.php';
     }

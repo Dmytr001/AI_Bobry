@@ -135,8 +135,6 @@
     flex-shrink: 0;
 }
 
-.episode-card:hover { transform: scale(1.05); border-color: #ff0000; }
-
 .episode-number-overlay {
     color: white;
     font-size: 100px;
@@ -171,7 +169,6 @@
     background: rgba(255,255,255,0.08); padding: 25px; border-radius: 15px; 
     cursor: pointer; transition: 0.3s; border: 1px solid transparent;
 }
-.review-card:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.1); }
 
 .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .my-review-badge { background: #27ae60; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: none; }
@@ -201,3 +198,129 @@
 /* ALERTY */
 .error-box { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; color: #ff0000; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
 .success-box { background: rgba(39, 174, 96, 0.2); border: 1px solid #27ae60; color: #27ae60; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+
+.modalTitle{
+    margin: 0;
+}
+
+.modal-content {
+    background: #000000;
+}
+
+.form-group textarea {
+    width: 100%;
+    background: #f9f9f9; /* Мягкий светлый фон вместо чисто белого */
+    border: 1px solid #e0e0e0; /* Тонкая, едва заметная рамка */
+    border-radius: 12px; /* Скругленные углы в стиле кнопок */
+    padding: 15px;
+    font-family: inherit; /* Используем шрифт сайта, а не системный моноширинный */
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    resize: vertical; /* Разрешаем менять размер только по вертикали */
+    transition: all 0.3s ease;
+    outline: none; /* Убираем стандартную синюю обводку браузера */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); /* Легкая внутренняя тень для объема */
+}
+
+/* Эффект при фокусе (когда пользователь начинает писать) */
+.form-group textarea:focus {
+    background: #ffffff;
+    border-color: #ff0000; /* Твоя фирменная красная линия при активации */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Мягкое свечение всей формы */
+}
+
+/* Стиль плейсхолдера (текст-подсказка) */
+.form-group textarea::placeholder {
+    color: #aaa;
+    font-weight: 400;
+}
+
+.reviews-section {
+    margin-top: 42px;
+    margin-bottom: 64px;
+}
+
+
+/* Контейнер для отзывов теперь в колонку */
+.reviews-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+/* Карточка отзыва на всю ширину */
+.review-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block; /* Позволяет блоку расти вниз */
+    height: auto;   /* Упаковывает контент */
+}
+
+/* Звезды в отзыве */
+.review-stars-row {
+    display: flex;
+    gap: 4px;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.star-static {
+    color: #333; /* Цвет пустой звезды */
+}
+
+.star-static.filled {
+    color: #ffcc00; /* Цвет заполненной звезды */
+}
+
+/* Текст отзыва */
+.review-content-body p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #ddd;
+    margin: 0;
+    word-wrap: break-word; /* Чтобы длинные слова не ломали верстку */
+}
+
+/* Бейдж "Твоя копия" */
+.my-review-badge {
+    background: #ff0000;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: none; /* Управляется через JS */
+}
+
+.pf-confirm-modal .confirm-content {
+    max-width: 400px;
+    text-align: center;
+    padding: 30px;
+}
+
+.confirm-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.confirm-content h2 {
+    color: #ff0000; /* В стиле Plusflix */
+    margin-bottom: 10px;
+}
+
+.confirm-content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+

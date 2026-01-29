@@ -4,27 +4,32 @@
         <span class="logo-text">PLUSFLIX</span>
     </a>
 
-    <div class="nav-actions">
-        <form method="get" action="/search" style="display:flex; gap:10px; align-items:center;">
-            <input type="text" class="search-input" name="q" placeholder="Wyszukiwanie...">
+    <div class="search-wrapper">
+        <form action="/search" method="get" class="search-form">
+            <div class="search-container-inner">
+                <input type="text" name="q" class="search-input-active" placeholder="Wyszukiwanie..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+
+                <input type="hidden" name="type" value="">
+                <input type="hidden" name="category" value="">
+                <input type="hidden" name="platform" value="">
+                <input type="hidden" name="language" value="">
+                <input type="hidden" name="minrating" value="">
+                <input type="hidden" name="maxrating" value="">
+                <input type="hidden" name="sort" value="relevance">
+
+                <button type="submit" class="search-submit-btn" aria-label="Szukaj">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
         </form>
+    </div>
 
-        <?php
-        $isAdminPage = (strpos($_SERVER['REQUEST_URI'] ?? '', '/admin') === 0);
-        ?>
-
-        <?php if (!$isAdminPage): ?>
-            <?php if (empty($_SESSION['adminid'])): ?>
-                <a href="/admin/login" class="btn btn-login">Login</a>
-            <?php else: ?>
-                <a href="/admin" class="btn btn-login">Panel Admina</a>
-            <?php endif; ?>
-        <?php endif; ?>
-
-
-
+    <div class="nav-actions">
         <a href="/favorites" class="btn btn-fav">Ulubione</a>
-        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌙</button>
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
     </div>
 </header>
 
@@ -35,6 +40,7 @@
         if (!btn) return;
 
         function syncIcon() {
+            // Обновляем иконку в зависимости от режима
             btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
         }
 

@@ -16,16 +16,36 @@
         <span class="logo-text">PLUSFLIX</span>
     </a>
 
-    <div class="nav-actions">
-        <input type="text" class="search-input" placeholder="Wyszukiwanie..." disabled>
+    <div class="search-wrapper">
+        <form action="/search" method="get" class="search-form">
+            <div class="search-container-inner">
+                <input type="text" name="q" class="search-input-active" placeholder="Wyszukiwanie...">
 
+                <input type="hidden" name="type" value="">
+                <input type="hidden" name="category" value="">
+                <input type="hidden" name="platform" value="">
+                <input type="hidden" name="language" value="">
+                <input type="hidden" name="minrating" value="">
+                <input type="hidden" name="maxrating" value="">
+                <input type="hidden" name="sort" value="relevance">
+
+                <button type="submit" class="search-submit-btn" aria-label="Szukaj">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="nav-actions">
         <?php if (empty($_SESSION['admin_id'])): ?>
-            <a href="/admin/login" class="btn btn-login">Login</a>
+            <a href="javascript:void(0)" onclick="openLoginModal()" class="btn btn-login">Login</a>
         <?php else: ?>
             <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
 
-        <a href="/favorites" class="btn btn-fav">Ulubione</a>
         <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
     </div>
 </header>
@@ -44,28 +64,34 @@
                 <div class="card-info">
                     <span class="card-name"><?= htmlspecialchars($t['name']) ?></span>
 
-                    <div class="badges-container">
-                        <div class="badge-list">
-                            <?php
-                            if (!empty($t['categories'])):
-                                $tags = array_map('trim', explode(',', $t['categories']));
-                                foreach (array_slice($tags, 0, 2) as $tag):
-                                    ?>
+                    <div class="badges-container" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+
+                        <?php if (!empty($t['categories'])): ?>
+                            <div class="badge-row-fill">
+                                <?php foreach (array_slice(array_map('trim', explode(',', $t['categories'])), 0, 3) as $tag): ?>
                                     <span class="badge"><?= htmlspecialchars($tag) ?></span>
-                                <?php endforeach; endif; ?>
-                        </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
 
-                        <div class="badge-list">
-                            <span class="badge">Eng</span>
-                            <span class="badge">Pl</span>
-                            <span class="badge">Rus</span>
-                        </div>
+                        <?php if (!empty($t['languages_list'])): ?>
+                            <div class="badge-row-fill">
+                                <?php foreach (array_slice($t['languages_list'], 0, 3) as $lang): ?>
+                                    <span class="badge"><?= htmlspecialchars($lang) ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
 
-                        <div class="badge-list">
-                            <span class="badge">Disney+</span>
-                            <span class="badge">Netflix</span>
-                        </div>
+                        <?php if (!empty($t['platforms_list'])): ?>
+                            <div class="badge-row-fill">
+                                <?php foreach (array_slice($t['platforms_list'], 0, 3) as $plat): ?>
+                                    <span class="badge color-platform"><?= htmlspecialchars($plat) ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
                     </div>
+
                 </div>
             </a>
         <?php endforeach; ?>
@@ -117,6 +143,62 @@
             });
         }
     })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('ajaxLoginForm');
+        const errorDiv = document.getElementById('loginError');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Останавливаем перезагрузку страницы
+
+                errorDiv.style.display = 'none'; // Скрываем прошлые ошибки
+                const formData = new FormData(this);
+
+                // Отправляем данные на ваш существующий обработчик
+                fetch('/admin/login', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Помечаем запрос как AJAX
+                    }
+                })
+                    .then(response => {
+                        // Если сервер сделал редирект (код 302), Fetch сам пойдет по нему
+                        // Если URL изменился на /admin..., значит вход успешен
+                        if (response.url.includes('/admin') && !response.url.includes('login')) {
+                            window.location.href = response.url; // Переходим в админку
+                        } else {
+                            // Если мы остались на странице логина — значит данные неверны
+                            showError("Błędny login lub hasło");
+                        }
+                    })
+                    .catch(error => {
+                        showError("Błąd połączenia z serwerem");
+                    });
+            });
+        }
+
+        function showError(text) {
+            errorDiv.textContent = text;
+            errorDiv.style.display = 'block';
+            // Легкая тряска окна при ошибке
+            const card = document.querySelector('.admin-login-card');
+            card.style.animation = 'none';
+            card.offsetHeight; /* trigger reflow */
+            card.style.animation = 'shake 0.4s';
+        }
+    });
+
+    // Функции открытия и закрытия
+    function openLoginModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
 </script>
 <footer class="pf-footer">
     <div class="pf-footer__inner">
@@ -161,6 +243,22 @@
         </div>
     </div>
 </footer>
+
+<div id="loginModal" class="admin-login-backdrop">
+    <div class="admin-login-card admin-login-anim">
+        <button class="admin-login-close" onclick="closeLoginModal()">&times;</button>
+        <h2 class="admin-login-title">Admin Login</h2>
+
+        <div id="loginError"></div>
+
+        <form id="ajaxLoginForm">
+            <input type="hidden" name="return" value="/admin/movies">
+            <input class="admin-login-input" type="text" name="login" placeholder="Imię" required>
+            <input class="admin-login-input" type="password" name="password" placeholder="Hasło" required>
+            <button class="admin-login-btn" type="submit">Login</button>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

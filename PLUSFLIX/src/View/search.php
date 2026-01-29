@@ -18,16 +18,13 @@
 
     <div class="nav-actions">
         <?php if (empty($_SESSION['admin_id'])): ?>
-            <a href="admin/login" class="btn btn-login">Login</a>
+            <a href="javascript:void(0)" onclick="openLoginModal()" class="btn btn-login">Login</a>
         <?php else: ?>
-            <a href="admin" class="btn btn-login">Panel Admina</a>
-            <form method="post" action="admin/logout" style="display:inline;">
-                <button type="submit" class="btn btn-login">Wyloguj</button>
-            </form>
+            <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
 
-        <a href="favorites" class="btn btn-fav">Ulubione</a>
-        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌙</button>
+        <a href="/favorites" class="btn btn-fav">Ulubione</a>
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
     </div>
 </header>
 
@@ -37,6 +34,8 @@ $vCat  = $_GET['category'] ?? '';
 $vPlat = $_GET['platform'] ?? '';
 $vLang = $_GET['language'] ?? '';
 $sortValue = $_GET['sort'] ?? 'relevance';
+$vMin = $_GET['min_rating'] ?? ''; // Поправлено имя
+$vMax = $_GET['max_rating'] ?? ''; // Поправлено имя
 
 $hasAnyFilter =
         !empty($_GET['q']) ||
@@ -44,9 +43,9 @@ $hasAnyFilter =
         !empty($vType) ||
         !empty($vPlat) ||
         !empty($vLang) ||
-        (isset($_GET['minrating']) && $_GET['minrating'] !== '') ||
-        (isset($_GET['maxrating']) && $_GET['maxrating'] !== '') ||
-        (!empty($_GET['sort']) && $_GET['sort'] !== 'relevance');
+        ($vMin !== '') ||
+        ($vMax !== '') ||
+        ($sortValue !== 'relevance');
 ?>
 
 <div class="search-redesign-container">
@@ -109,13 +108,26 @@ $hasAnyFilter =
                 </select>
             </div>
 
+            <div class="pf-select" data-name="sort">
+                <button type="button" class="pf-select__btn">Sortowanie</button>
+                <select name="sort" class="pf-select__native" aria-label="Sortowanie">
+                    <option value="relevance" <?= $sortValue==='relevance' ? 'selected' : '' ?>>Domyślnie</option>
+                    <option value="rating_desc" <?= $sortValue==='rating_desc' ? 'selected' : '' ?>>Ocena malejąco</option>
+                    <option value="rating_asc" <?= $sortValue==='rating_asc' ? 'selected' : '' ?>>Ocena rosnąco</option>
+                    <option value="name_asc" <?= $sortValue==='name_asc' ? 'selected' : '' ?>>Nazwa A–Z</option>
+                    <option value="name_desc" <?= $sortValue==='name_desc' ? 'selected' : '' ?>>Nazwa Z–A</option>
+                </select>
+            </div>
+
             <input
                     class="rating-input-style"
                     type="number"
                     step="0.1"
-                    name="minrating"
+                    min="0"
+                    max="5"
+                    name="min_rating"
                     placeholder="Ocena min..."
-                    value="<?= htmlspecialchars($_GET['minrating'] ?? '') ?>"
+                    value="<?= htmlspecialchars($vMin) ?>"
                     aria-label="Ocena min"
             />
 
@@ -123,45 +135,37 @@ $hasAnyFilter =
                     class="rating-input-style"
                     type="number"
                     step="0.1"
-                    name="maxrating"
+                    min="0"
+                    max="5"
+                    name="max_rating"
                     placeholder="Ocena max..."
-                    value="<?= htmlspecialchars($_GET['maxrating'] ?? '') ?>"
+                    value="<?= htmlspecialchars($vMax) ?>"
                     aria-label="Ocena max"
             />
 
-            <!-- right overlay area: icons + search (search always visible) -->
-            <div class="search-right">
-                <?php if ($hasAnyFilter): ?>
-                    <a class="icon-btn" href="search" aria-label="Wyczyść filtry" title="Wyczyść filtry">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
-                            <path d="M12 5a7 7 0 1 1-6.32 4H3l3.5-3.5L10 9H7.76A5 5 0 1 0 12 7c1.13 0 2.18.37 3.03 1l1.42-1.42A6.97 6.97 0 0 0 12 5z"
-                                  fill="currentColor"/>
-                        </svg>
-                    </a>
-
-                    <button class="icon-btn" type="button" id="copyLinkBtn" aria-label="Kopiuj link" title="Kopiuj link">
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
-                            <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z"
-                                  fill="currentColor"/>
-                        </svg>
-                    </button>
-                <?php endif; ?>
-
-                <button class="icon-btn" type="submit" aria-label="Search" title="Szukaj">
+            <?php if ($hasAnyFilter): ?>
+                <a class="icon-btn" href="search" aria-label="Wyczyść filtry" title="Wyczyść filtry">
                     <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
-                        <path d="M10 2a8 8 0 1 1 5.29 14l4.2 4.2-1.4 1.4-4.2-4.2A8 8 0 0 1 10 2zm0 2a6 6 0 1 0 0 12a6 6 0 0 0 0-12z"
+                        <path d="M12 5a7 7 0 1 1-6.32 4H3l3.5-3.5L10 9H7.76A5 5 0 1 0 12 7c1.13 0 2.18.37 3.03 1l1.42-1.42A6.97 6.97 0 0 0 12 5z"
+                              fill="currentColor"/>
+                    </svg>
+                </a>
+
+                <button class="icon-btn" type="button" id="copyLinkBtn" aria-label="Kopiuj link" title="Kopiuj link">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                        <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z"
                               fill="currentColor"/>
                     </svg>
                 </button>
-            </div>
+            <?php endif; ?>
 
-            <select class="filter-btn-style" name="sort" aria-label="Sortowanie" style="display:none;">
-                <option value="relevance" <?= ($sortValue === 'relevance') ? 'selected' : '' ?>>Domyślnie</option>
-                <option value="ratingdesc" <?= ($sortValue === 'ratingdesc') ? 'selected' : '' ?>>Ocena malejąco</option>
-                <option value="ratingasc" <?= ($sortValue === 'ratingasc') ? 'selected' : '' ?>>Ocena rosnąco</option>
-                <option value="nameasc" <?= ($sortValue === 'nameasc') ? 'selected' : '' ?>>Nazwa A–Z</option>
-                <option value="namedesc" <?= ($sortValue === 'namedesc') ? 'selected' : '' ?>>Nazwa Z–A</option>
-            </select>
+            <!-- right overlay area: icons + search (search always visible) -->
+            <button class="icon-btn" type="submit" aria-label="Search" title="Szukaj">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
         </div>
 
         <!-- second row inside the gray panel -->
@@ -186,33 +190,44 @@ $hasAnyFilter =
                 <a href="title?id=<?= (int)$t['id'] ?>" class="card" data-id="<?= (int)$t['id'] ?>">
                     <div class="card-img" style="background-image: url('<?= !empty($t['imagepath']) ? htmlspecialchars($t['imagepath']) : 'https://via.placeholder.com/300x450' ?>');">
                         <div class="rating"><span>★</span> <?= number_format((float)($t['average_rating'] ?? 0), 1) ?>/5</div>
+                        <div class="fav-badge" title="Ulubione">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                        </div>
                     </div>
 
                     <div class="card-info">
                         <span class="card-name"><?= htmlspecialchars($t['name'] ?? '') ?></span>
 
-                        <div class="badges-container">
-                            <div class="badge-list">
-                                <?php
-                                if (!empty($t['categories'])) {
+                        <div class="badges-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: auto;">
+
+                            <?php if (!empty($t['categories'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php
                                     $tags = explode(',', $t['categories']);
-                                    foreach (array_slice($tags, 0, 2) as $tag) {
-                                        echo '<span class="badge">' . htmlspecialchars(trim($tag)) . '</span>';
-                                    }
-                                }
-                                ?>
-                            </div>
+                                    foreach (array_slice($tags, 0, 3) as $tag): ?>
+                                        <span class="badge"><?= htmlspecialchars(trim($tag)) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
 
-                            <div class="badge-list">
-                                <span class="badge">Eng</span>
-                                <span class="badge">Pl</span>
-                                <span class="badge">Rus</span>
-                            </div>
+                            <?php if (!empty($t['languages_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['languages_list'], 0, 3) as $lang): ?>
+                                        <span class="badge"><?= htmlspecialchars($lang) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
 
-                            <div class="badge-list">
-                                <span class="badge">Disney+</span>
-                                <span class="badge">Netflix</span>
-                            </div>
+                            <?php if (!empty($t['platforms_list'])): ?>
+                                <div class="badge-row-fill">
+                                    <?php foreach (array_slice($t['platforms_list'], 0, 3) as $plat): ?>
+                                        <span class="badge color-platform"><?= htmlspecialchars($plat) ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </a>
@@ -260,18 +275,25 @@ $hasAnyFilter =
 
     // Favorites marker
     function checkFavorites() {
-        const favorites = JSON.parse(localStorage.getItem('plusflixfavorites') || '[]');
-        document.querySelectorAll('.card[data-id]').forEach(link => {
-            const currentId = link.getAttribute('data-id');
-            if (favorites.includes(currentId)) {
-                const titleSpan = link.querySelector('.card-name');
-                if (titleSpan && !titleSpan.innerHTML.includes('♥')) {
-                    titleSpan.innerHTML = '♥ ' + titleSpan.innerHTML;
+        const favorites = JSON.parse(localStorage.getItem('plusflix_favorites') || "[]");
+
+        document.querySelectorAll('.card[data-id]').forEach(card => {
+            const currentId = card.getAttribute('data-id');
+            const favBadge = card.querySelector('.fav-badge');
+
+            if (favBadge) {
+                // Если ID фильма есть в массиве избранного — показываем красный квадрат
+                if (favorites.includes(currentId)) {
+                    favBadge.style.display = 'flex';
+                } else {
+                    favBadge.style.display = 'none';
                 }
             }
         });
     }
-    window.onload = checkFavorites;
+
+    // Запуск при загрузке страницы
+    window.addEventListener('load', checkFavorites);
 
     // Theme toggle + icon
     (function () {
@@ -296,14 +318,38 @@ $hasAnyFilter =
         }
     })();
 
-    // Figma-like filters: open options in second row inside gray panel
     (function () {
         const panel = document.getElementById('pfPanelRow');
+        const allSelectWraps = document.querySelectorAll('.pf-select');
 
         function setActiveBtnState() {
-            document.querySelectorAll('.pf-select').forEach(wrap => {
+            allSelectWraps.forEach(wrap => {
                 const native = wrap.querySelector('.pf-select__native');
-                wrap.classList.toggle('is-active', (native.value || '') !== '');
+                const btn = wrap.querySelector('.pf-select__btn');
+
+                // Сохраняем исходное название (Typ, Gatunki и т.д.), если его еще нет
+                if (!btn.dataset.defaultText) {
+                    btn.dataset.defaultText = btn.textContent;
+                }
+
+                const val = native.value;
+                // Условие активности: значение не пустое И не является дефолтной сортировкой
+                const hasValue = (val !== "" && val !== "relevance");
+
+                // 1. Управляем текстом кнопки
+                if (hasValue) {
+                    // Показываем текст выбранного элемента
+                    btn.textContent = native.options[native.selectedIndex].text;
+                } else {
+                    // Возвращаем исходный текст (Typ, Gatunki, Sortowanie...)
+                    btn.textContent = btn.dataset.defaultText;
+                }
+
+                // 2. Управляем классом активного состояния (для красного текста)
+                wrap.classList.toggle('is-active', hasValue);
+
+                // При обновлении состояний всегда убираем подсветку открытого меню (фон)
+                wrap.classList.remove('is-menu-open');
             });
         }
 
@@ -318,11 +364,18 @@ $hasAnyFilter =
             panel.classList.remove('is-open');
             panel.dataset.openFor = '';
             panel.innerHTML = '';
+            // Убираем красный фон со всех кнопок при закрытии
+            allSelectWraps.forEach(w => w.classList.remove('is-menu-open'));
         }
 
         function openPanelFor(selectWrap) {
             const native = selectWrap.querySelector('.pf-select__native');
             const options = buildOptionsFromNative(native);
+
+            // Убираем подсветку у других кнопок
+            allSelectWraps.forEach(w => w.classList.remove('is-menu-open'));
+            // Добавляем красный фон текущей нажатой кнопке
+            selectWrap.classList.add('is-menu-open');
 
             panel.innerHTML = '';
             panel.classList.add('is-open');
@@ -331,6 +384,7 @@ $hasAnyFilter =
             options.forEach(opt => {
                 const b = document.createElement('button');
                 b.type = 'button';
+                // Подсвечиваем выбранный пункт в выпадающем списке
                 b.className = 'pf-panel-opt' + ((native.value === opt.value) ? ' is-selected' : '');
                 b.textContent = opt.text;
 
@@ -345,17 +399,15 @@ $hasAnyFilter =
             });
         }
 
-        // init from GET
+        // Инициализация при загрузке
         setActiveBtnState();
 
-        // top buttons
-        document.querySelectorAll('.pf-select').forEach(wrap => {
+        // Клики по кнопкам фильтров
+        allSelectWraps.forEach(wrap => {
             const btn = wrap.querySelector('.pf-select__btn');
-
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const name = wrap.dataset.name || '';
-
                 if (panel.classList.contains('is-open') && panel.dataset.openFor === name) {
                     closePanel();
                     return;
@@ -364,7 +416,7 @@ $hasAnyFilter =
             });
         });
 
-        // close on outside click / ESC
+        // Закрытие по клику вне или ESC
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.search-redesign-container')) closePanel();
         });
@@ -372,6 +424,72 @@ $hasAnyFilter =
             if (e.key === 'Escape') closePanel();
         });
     })();
+    form.querySelectorAll('.rating-input-style').forEach(el => {
+        el.addEventListener('input', function() {
+            if (this.value > 5) this.value = 5;
+            if (this.value < 0 && this.value !== "") this.value = 0;
+        });
+
+        el.addEventListener('change', () => {
+            if (this.value !== "") form.submit();
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('ajaxLoginForm');
+        const errorDiv = document.getElementById('loginError');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Останавливаем перезагрузку страницы
+
+                errorDiv.style.display = 'none'; // Скрываем прошлые ошибки
+                const formData = new FormData(this);
+
+                // Отправляем данные на ваш существующий обработчик
+                fetch('/admin/login', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Помечаем запрос как AJAX
+                    }
+                })
+                    .then(response => {
+                        // Если сервер сделал редирект (код 302), Fetch сам пойдет по нему
+                        // Если URL изменился на /admin..., значит вход успешен
+                        if (response.url.includes('/admin') && !response.url.includes('login')) {
+                            window.location.href = response.url; // Переходим в админку
+                        } else {
+                            // Если мы остались на странице логина — значит данные неверны
+                            showError("Błędny login lub hasło");
+                        }
+                    })
+                    .catch(error => {
+                        showError("Błąd połączenia z serwerem");
+                    });
+            });
+        }
+
+        function showError(text) {
+            errorDiv.textContent = text;
+            errorDiv.style.display = 'block';
+            // Легкая тряска окна при ошибке
+            const card = document.querySelector('.admin-login-card');
+            card.style.animation = 'none';
+            card.offsetHeight; /* trigger reflow */
+            card.style.animation = 'shake 0.4s';
+        }
+    });
+
+    // Функции открытия и закрытия
+    function openLoginModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModal').style.display = 'none';
+    }
 </script>
 <footer class="pf-footer">
     <div class="pf-footer__inner">
@@ -416,5 +534,22 @@ $hasAnyFilter =
         </div>
     </div>
 </footer>
+
+<div id="loginModal" class="admin-login-backdrop">
+    <div class="admin-login-card admin-login-anim">
+        <button class="admin-login-close" onclick="closeLoginModal()">&times;</button>
+        <h2 class="admin-login-title">Admin Login</h2>
+
+        <div id="loginError"></div>
+
+        <form id="ajaxLoginForm">
+            <input type="hidden" name="return" value="/admin/movies">
+            <input class="admin-login-input" type="text" name="login" placeholder="Imię" required>
+            <input class="admin-login-input" type="password" name="password" placeholder="Hasło" required>
+            <button class="admin-login-btn" type="submit">Login</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>
