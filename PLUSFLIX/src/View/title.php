@@ -54,14 +54,19 @@ $episodes = $episodes ?? [];
             <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
 
-        <a href="/favorites" class="btn btn-fav">Ulubione</a>
+        <a href="/favorites" class="btn btn-fav" aria-label="Ulubione">
+            <span class="btn-text">Ulubione</span>
+            <svg class="heart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        </a>
         <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
     </div>
 </header>
 
 <?php if ($title): ?>
-    <section class="movie-hero" style="background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, #000000 100%), url('<?= htmlspecialchars($title['image_path']) ?>');">
-        <div class="hero-container">
+    <section class="movie-hero" style="--hero-img: url('<?= htmlspecialchars($title['image_path']) ?>');">
+       <div class="hero-container">
 
             <div class="hero-flex-layout" style="justify-content: space-between; align-items: flex-start; width: 100%;">
                 <div class="rating-badge-hero" >
@@ -78,7 +83,7 @@ $episodes = $episodes ?? [];
                 </button>
             </div>
 
-            <div class="hero-info-box" style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-top: auto;">
+            <div class="hero-info-box">
                 <div class="hero-title-row" style="margin: 0;">
                     <h1 class="movie-title-large" style="font-size: 3.5rem; margin: 0; line-height: 1;"><?= htmlspecialchars($title['name']) ?></h1>
                 </div>

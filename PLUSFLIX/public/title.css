@@ -92,9 +92,14 @@
 /* --- SEKCJA ODCINKI --- */
 .episodes-section { 
     margin-top: 60px; 
-    background: rgba(255,255,255,0.05); 
+    background: rgba(26, 26, 26, 1);
     padding: 30px; 
     border-radius: 20px; 
+}
+
+body.light-mode .episodes-section{
+    background: rgb(0, 0, 0);
+
 }
 
 .section-title-red {
@@ -253,7 +258,7 @@
 /* Карточка отзыва на всю ширину */
 .review-card {
     width: 100%;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(26, 26, 26, 1);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 24px;
@@ -261,6 +266,19 @@
     transition: all 0.3s ease;
     display: block; /* Позволяет блоку расти вниз */
     height: auto;   /* Упаковывает контент */
+}
+
+body.light-mode .review-card{
+    background: #000000;
+color: #fff;
+}
+
+body.light-mode .star-static{
+    color: rgba(144, 144, 144, 0.75);
+}
+
+body.light-mode .star-static.filled {
+    color: #ffcc00;
 }
 
 /* Звезды в отзыве */
@@ -314,6 +332,14 @@
     margin-top: 20px;
 }
 
+.hero-info-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: auto;
+}
+
 .confirm-content h2 {
     color: #ff0000; /* В стиле Plusflix */
     margin-bottom: 10px;
@@ -324,3 +350,65 @@
     opacity: 0.9;
 }
 
+body.light-mode{
+    --theme-bg:#f5f5f5;
+    --theme-text:#000000;
+    --theme-accent:#cc0000;
+}
+
+body.light-mode .movie-title-large{
+    color: #000000;
+}
+
+.movie-hero {
+    /* Фиксированные настройки фона */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /* Комбинируем градиент и переменную изображения */
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, #000000 100%),
+    var(--hero-img);
+
+    /* Дополнительные стили (высота, отступы и т.д.) */
+    min-height: 500px;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 40px;
+}
+
+body.light-mode .movie-hero {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, var(--theme-bg) 100%),
+    var(--hero-img);
+}
+
+@media (max-width: 618px) {
+    .episodes-section {
+        display: none !important;
+    }
+}
+
+@media (max-width: 783px) {
+    .hero-info-box {
+        margin-top: clamp(50px, 8vw, 100px);;
+        flex-direction: column; /* Элементы встают друг над другом */
+        align-items: center;    /* Центрируем элементы (кнопку и обертку заголовка) по горизонтали */
+        text-align: center;
+        gap: 20px;               /* Добавляем расстояние между заголовком и кнопкой */
+    }
+
+    .movie-title-large {
+        max-width: 100%;
+        font-size: clamp(2.2rem, 8vw, 3.5rem) !important;
+        line-height: 1.1;
+    }
+
+    .hero-actions {
+        width: 100%; /* Кнопка избранного может занять всю ширину */
+    }
+
+    .movie-hero{
+        min-height: 344px;
+        padding-bottom: 0;
+    }
+}

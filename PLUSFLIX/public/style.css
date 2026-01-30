@@ -103,7 +103,6 @@ body{
     color:var(--theme-text);
     font-size:20px;
     cursor:pointer;
-    margin-left:10px;
 }
 
 /* ====== Home hero ====== */
@@ -136,12 +135,21 @@ body{
 /* ====== Sections ====== */
 .container{ padding:20px 60px; }
 
-.section-title{
-    font-size:48px;
-    margin-top:64px;
-    margin-bottom:42px;
-    text-align:center;
+.section-title {
+    /* МИНИМУМ: 28px (для смартфонов)
+       ГИБКИЙ: 5vw (5% ширины экрана)
+       МАКСИМУМ: 48px (твой исходный размер для десктопа) */
+    font-size: clamp(28px, 5vw, 48px);
+
+    /* ГИБКИЕ ОТСТУПЫ: чтобы заголовок не «давил» на контент на мобильных */
+    margin-top: clamp(54px, 6vw, 64px);
+    margin-bottom: clamp(48px, 4vw, 42px);
+
+    text-align: center;
+    font-weight: 700; /* Обычно такие крупные заголовки делают жирными */
+    line-height: 1.2;
 }
+
 .section-title span{ color:var(--primary-red); }
 
 /* ====== GRID (5 posters everywhere) ====== */
@@ -155,6 +163,8 @@ body{
 
 .card{
     width:240px;
+    min-width: 240px;
+    max-width: 240px;
     background:#b3b3b3;
     border-radius:20px;
     overflow:hidden;
@@ -164,6 +174,12 @@ body{
     height:100%;
     transition:transform 0.2s ease;
 }
+
+body.light-mode .card{
+    background:#000;
+
+}
+
 .card:hover{ transform:translateY(-5px); }
 
 .card-img{
@@ -196,6 +212,12 @@ body{
     text-align:center;
     color:#000;
 }
+
+body.light-mode .card-info{
+    background: #000000;
+    color:#fff;
+}
+
 
 .card-name{
     font-size:26px;
@@ -310,18 +332,29 @@ body.search-page .pf-select__native{
     height:1px;
 }
 
-body.search-page .pf-select__btn{
-    background:#000;
-    color:#fff;
-    border:none;
-    border-radius:14px;
-    padding:10px 18px;
-    font-weight:800;
-    font-size:16px;
-    cursor:pointer;
-    min-width:110px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+body.search-page .pf-select__btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+
+    /* Адаптивный шрифт: от 13px до 16px */
+    font-size: clamp(13px, 1.2vw, 16px);
+    font-weight: 800;
+
+    /* Адаптивные отступы: по горизонтали уменьшаются до 12px */
+    padding: 10px clamp(12px, 1.5vw, 18px);
+
+    /* Минимальная ширина теперь тоже гибкая */
+    min-width: clamp(80px, 10vw, 110px);
+}
+
+body.light-mode.search-page .pf-select__btn {
+    background:#8f8f8f;
+
 }
 
 body.search-page .pf-select.is-active .pf-select__btn{
@@ -335,19 +368,31 @@ body.search-page .pf-panel-row{
     flex-wrap:wrap;
     align-items:center;
 }
+
+
 body.search-page .pf-panel-row.is-open{ display:flex; }
 
-body.search-page .pf-panel-opt{
-    background:#000;
-    color:#fff;
-    border:none;
-    border-radius:12px;
-    padding:10px 16px;
-    font-weight:800;
-    font-size:16px;
-    cursor:pointer;
-    min-width:140px;
-    text-align:center;
+body.search-page .pf-panel-opt {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: center;
+
+    /* Адаптивный шрифт */
+    font-size: clamp(13px, 1.2vw, 16px);
+    font-weight: 800;
+
+    /* Адаптивные отступы */
+    padding: 10px clamp(10px, 1.4vw, 16px);
+
+    /* Минимальная ширина */
+    min-width: clamp(100px, 12vw, 140px);
+}
+
+body.light-mode.search-page .pf-panel-opt{
+    background:#8f8f8f;
 }
 
 body.search-page .pf-panel-opt.is-selected{
@@ -372,7 +417,7 @@ body.search-page .icon-btn{
     height:44px;
     border:1px solid rgba(255,255,255,0.18);
     border-radius:14px;
-    background:rgba(0,0,0,0.35);
+    background:rgba(0,0,0,1);
     color:#fff;
     cursor:pointer;
     display:inline-flex;
@@ -384,7 +429,6 @@ body.search-page .icon-btn{
 }
 
 body.search-page .icon-btn:hover{
-    background:rgba(0,0,0,0.48);
     border-color:rgba(255,255,255,0.28);
     transform:translateY(-1px);
 }
@@ -460,10 +504,21 @@ body.admin-page{
     padding:18px;
 }
 
+body.light-mode .admin-group{
+    background:#000;
+
+}
+
 .admin-group__title{
     font-weight:700;
     color:#222;
     margin-bottom:10px;
+}
+
+body.light-mode .admin-group__title{
+    color:#fff;
+
+
 }
 
 .admin-link{
@@ -501,7 +556,7 @@ body.admin-page{
     overflow: visible;
 
     /* можно оставить минимальную высоту, чтобы выглядело как “панель” */
-    min-height:520px;
+    min-height:320px;
 }
 
 .admin-title{
@@ -774,8 +829,13 @@ body.admin-page{
 }
 
 .admin-table tbody tr{
-    background: rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.37);
     border-radius:14px;
+}
+
+body.light-mode .admin-table tbody tr{
+    background: rgba(226, 226, 226, 0.37);
+
 }
 
 .admin-table tbody td{
@@ -1271,6 +1331,10 @@ body.admin-login-overlay-page{ background:#000; }
     max-width:720px;
     margin:30px auto 0;
 }
+body.light-mode .empty-state{
+    color: #000;
+}
+
 .pf-footer{
     background: var(--theme-bg);
     border-top:1px solid var(--theme-text);
@@ -1398,7 +1462,7 @@ body.admin-login-overlay-page{ background:#000; }
 
 /* Стили формы из Figma */
 .search-container-inner {
-    width: 405px; /* Фиксированная ширина как в дизайне */
+    width: 30vw; /* Фиксированная ширина как в дизайне */
     height: 36px;
     background: #D9D9D9;
     border-radius: 12px;
@@ -1442,6 +1506,10 @@ body.search-page .search-redesign-container {
     overflow: hidden;
 }
 
+body.light-mode.search-page .search-redesign-container {
+    background: #000000;
+}
+
 /* Строка с элементами */
 body.search-page .search-top-row {
     display: flex;
@@ -1456,7 +1524,7 @@ body.search-page .search-top-row {
 /* Поле ввода названия - ТЕПЕРЬ ОНО ГИБКОЕ */
 body.search-page .new-search-input {
     flex: 1; /* Занимает всё доступное пространство */
-    min-width: 200px; /* Чтобы не сжималось в ноль */
+    min-width: 170px; /* Чтобы не сжималось в ноль */
     max-width: none; /* Убираем жесткий лимит 360px */
     padding: 12px 18px;
     border-radius: 12px;
@@ -1484,7 +1552,7 @@ body.search-page .icon-btn {
     height: 44px;
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 14px;
-    background: rgba(0,0,0,0.35);
+    background: #ff0000;
     color: #fff;
     display: flex;
     align-items: center;
@@ -1638,6 +1706,12 @@ body.search-page .pf-select.is-active .pf-select__btn{
 
 }
 
+/* Специально для светлой темы */
+body.light-mode.search-page .pf-select.is-active .pf-select__btn {
+    background-color: #8f8f8f !important; /* Цвет фона в светлой теме */
+}
+
+
 div#pfPanelRow {
     padding-left: 24px;
 }
@@ -1752,7 +1826,7 @@ div#pfPanelRow {
     margin-right: -50vw;
 
     /* Высота теперь гибкая: минимум 594px, но растет при необходимости */
-    min-height: 90vh;
+    min-height: 95vh;
     padding: 120px 0; /* Отступы сверху и снизу из Figma */
 
     /* Фон */
@@ -1835,23 +1909,35 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 12px 16px;
-    gap: 12px; /* Расстояние между иконкой и текстом */
-
-    width: 384px;
-    height: 50px;
-
-    background: #FF0000;
-    border-radius: 12px;
     border: none;
     text-decoration: none;
+    background: #FF0000;
+    color: #FFFFFF;
+    border-radius: 12px;
+    transition: transform 0.2s ease, background 0.2s ease;
+    cursor: pointer;
 
+    /* ГИБКАЯ ШИРИНА: минимум 280px, растет как 30% экрана, максимум 384px */
+    width: clamp(230px, 30vw, 384px);
+
+    /* ГИБКАЯ ВЫСОТА: подстраивается под размер текста */
+    height: clamp(44px, 5vw, 50px);
+
+    /* ГИБКИЙ ОТСТУП МЕЖДУ ИКОНКОЙ И ТЕКСТОМ */
+    gap: clamp(8px, 1.2vw, 12px);
+    padding: 12px clamp(8px, 2vw, 16px);
+
+    /* ГИБКИЙ РАЗМЕР ШРИФТА: от 15px до 18px */
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    font-size: 18px;
-    color: #FFFFFF;
+    font-size: clamp(15px, 1.5vw, 18px);
+}
 
-    transition: transform 0.2s ease, background 0.2s ease;
+/* МАСШТАБИРОВАНИЕ ИКОНКИ ВНУТРИ */
+.btn-hero svg {
+    /* Иконка будет от 18px до 22px в зависимости от ширины экрана */
+    width: clamp(18px, 1.8vw, 22px);
+    height: auto;
 }
 
 /* Стили для самой иконки внутри кнопки */
@@ -2188,11 +2274,8 @@ body {
 
 /* Левый блок (Описание) */
 .grid-description {
-    background: rgba(26, 26, 26, 0.6);
-    backdrop-filter: blur(10px);
     padding: 30px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .grid-title {
@@ -2208,6 +2291,11 @@ body {
     color: #e0e0e0;
 }
 
+body.light-mode .movie-description-text {
+
+    color: #000;
+}
+
 /* Правая колонка (Sidebar) */
 .grid-sidebar {
     display: flex;
@@ -2217,10 +2305,14 @@ body {
 
 /* Карточки внутри сайдбара */
 .detail-group-card {
-    background: rgba(34, 34, 34, 0.8);
+    background: rgba(26, 26, 26, 1);
     padding: 20px;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.light-mode .detail-group-card {
+    background: rgba(0, 0, 0, 1);
 }
 
 .detail-group-card h3 {
@@ -2250,6 +2342,11 @@ body {
     transition: transform 0.2s;
 }
 
+body.light-mode .genre-tag-pill{
+    background: #000000;
+
+}
+
 .platform-pill:hover {
     transform: translateY(-2px);
     background: #ff0000;
@@ -2272,15 +2369,13 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Адаптивность для мобилок */
-@media (max-width: 900px) {
-    .main-info-grid {
-        grid-template-columns: 1fr; /* Схлопываем в одну колонку */
-    }
-    .title-container-v2 {
-        margin-top: 20px;
-    }
+body.light-mode .badge-lang-pill{
+    background: var(--theme-bg);
+    color: #000000;
 }
+
+/* Адаптивность для мобилок */
+
 
 /* 1. Убираем отрицательный маржин, заменяем на обычный отступ */
 .title-container-v2 {
@@ -2312,14 +2407,6 @@ body {
     box-sizing: border-box;
 }
 
-/* 3. Очистка потока (на всякий случай) */
-.main-info-grid {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 30px;
-    align-items: start;
-    clear: both; /* Очистка плавающих элементов */
-}
 
 /* Шапка внутри блока описания */
 .description-header-tags {
@@ -2365,19 +2452,19 @@ body {
     backdrop-filter: blur(5px); /* Эффект матового стекла */
 }
 
-/* Эффект при наведении на жанр */
-.genre-tag-pill:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: #ff0000;
-    transform: translateY(-2px);
-    color: #ff0000;
-}
+
 
 /* Небольшая корректировка заголовка описания */
 .grid-title {
     margin-top: 10px;
     font-size: 1.6rem;
     color: #fff; /* Можно оставить белым, если фон темный */
+}
+
+body.light-mode .grid-title {
+
+    color: #000; /* Можно оставить белым, если фон темный */
+
 }
 
 .btn-back {
@@ -2431,7 +2518,7 @@ body {
 
 /* Увеличиваем визуальный вес твоих существующих элементов */
 .movie-title-large {
-    font-size: 125px !important; /* Делаем очень крупным */
+    font-size: 9vw !important;
     text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
     max-width: 50vw;
 }
@@ -2567,11 +2654,19 @@ body {
 
 .star-rating-action {
     display: flex;
-    flex-direction: row-reverse; /* Меняем порядок для удобства CSS-селекторов */
-    gap: 10px;
-    font-size: 64px; /* Увеличен размер в 2 раза */
+    flex-direction: row-reverse;
+    /* ГИБКИЙ ОТСТУП: от 5px на мобильных до 10px на десктопе */
+    gap: clamp(5px, 1vw, 10px);
+
+    /* ГИБКИЙ РАЗМЕР ЗВЕЗД:
+       Минимум: 32px (чтобы влезло в экран телефона)
+       Предпочтительно: 8vw (8% от ширины экрана)
+       Максимум: 64px (твой текущий гигантский размер) */
+    font-size: clamp(32px, 8vw, 64px);
+
     cursor: pointer;
     line-height: 1;
+    justify-content: center; /* Центрируем звезды, если контейнер широкий */
 }
 
 .star-clickable {
@@ -2640,4 +2735,404 @@ body {
     border-radius: 8px;
     font-size: 11px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 790px) {
+    /* Скрываем само поле ввода */
+    .search-wrapper .search-input-active {
+        display: none;
+    }
+
+    /* Уменьшаем контейнер до размера кнопки */
+    .search-wrapper {
+        width: auto;
+        margin: 0 10px;
+    }
+
+    .search-form {
+        width: 40px; /* Ширина иконки */
+        height: 40px;
+    }
+
+    .search-container-inner {
+        padding: 0;
+        border: none;
+        background: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Стилизуем кнопку, чтобы она выглядела как круглая иконка-ссылка */
+    .search-submit-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 0.3s;
+        padding: 0;
+    }
+
+    .search-submit-btn:hover {
+        background: #ff0000; /* Цвет Plusflix при наведении */
+    }
+
+    .search-submit-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: #fff; /* Цвет лупы */
+    }
+}
+
+/* Базовые стили для иконки (скрыта на десктопе) */
+.heart-icon {
+    display: none;
+}
+
+@media (max-width: 790px) {
+    /* Скрываем текст внутри кнопки */
+    .btn-fav .btn-text {
+        display: none;
+    }
+
+    /* Показываем сердечко */
+    .heart-icon {
+        display: block;
+        stroke: #fff; /* Белое сердечко */
+        transition: transform 0.2s ease;
+    }
+
+    /* Делаем кнопку круглой или квадратной под иконку */
+    .btn-fav {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        border: none;
+    }
+
+    .btn-fav:hover .heart-icon {
+        fill: #ff0000; /* При наведении сердечко заливается красным */
+        stroke: #ff0000;
+        transform: scale(1.1);
+    }
+
+    .search-container-inner{
+        width: 40px;
+    }
+}
+
+@media (max-width: 535px) {
+    .navbar {
+        /* Устанавливаем padding 0 сверху/снизу и 24px по бокам */
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+
+    }
+
+    .logo-text {
+        display: none !important;
+    }
+
+}
+
+@media (max-width: 565px) {
+    .movie-grid {
+        grid-template-columns: repeat(1, 240px);
+    }
+}
+
+@media (max-width: 543px) {
+    .main-info-grid {
+        /* Меняем две колонки на одну */
+        grid-template-columns: 1fr;
+
+        /* Уменьшаем отступ между блоками, чтобы на мобильных не было дыр */
+        gap: 20px;
+    }
+}
+
+@media (max-width: 783px) {
+    /* Уменьшаем кнопку "Назад" */
+    .btn-back {
+        padding: 8px 12px;      /* Было 10px 18px */
+        font-size: 10px;        /* Было 14px */
+        gap: 4px;               /* Чуть плотнее */
+        margin-bottom: 12px;    /* Уменьшаем внешний отступ */
+    }
+
+    /* Уменьшаем бейдж рейтинга */
+    .rating-badge-hero {
+        padding: 8px 12px;      /* Было 10px 18px */
+        font-size: 14px;        /* Было 22px */
+        gap: 4px;
+    }
+
+    /* Если внутри рейтинга есть иконка звезды, уменьшим и её */
+    .rating-badge-hero svg,
+    .rating-badge-hero span.star {
+        transform: scale(0.9);
+    }
+}
+
+/* По умолчанию скрываем */
+.mobile-search-wrapper { display: none; }
+
+@media (max-width: 1420px) {
+    .search-redesign-container { display: none !important; }
+
+    .mobile-search-wrapper {
+        display: block;
+        /* Используем цвет основного контейнера */
+        background: #8f8f8f;
+        margin: 15px 20px;
+        padding: 16px;
+        border-radius: 18px; /* Как в основном дизайне */
+        position: relative;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+
+    body.light-mode .mobile-search-wrapper{
+        background: #000;
+
+    }
+
+    .mobile-search-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Инпут теперь светлый, как .new-search-input */
+    .mobile-input-trigger {
+        flex: 1;
+        background: #e6e6e6;
+        border: none;
+        color: #000;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        outline: none;
+    }
+
+    /* Иконки действий */
+    .mobile-header-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .mobile-action-btn {
+        background: rgba(0, 0, 0, 0.1); /* Легкий фон для кнопок на сером */
+        border: none;
+        border-radius: 10px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000; /* Иконки черные на сером фоне */
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .mobile-action-btn:active {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Раскрывающаяся часть */
+    .mobile-search-expandable {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-search-wrapper.is-open .mobile-search-expandable {
+        max-height: 1200px;
+        margin-top: 16px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 16px;
+    }
+
+    /* Рейтинг: инпуты как основной поиск */
+    .mobile-rating-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .mobile-rating-row input {
+        background: #e6e6e6;
+        border: none;
+        color: #000;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* Группы фильтров */
+    .mobile-filter-group {
+        margin-bottom: 18px;
+    }
+
+    .mobile-filter-label {
+        display: block;
+        color: rgba(0,0,0,0.7);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        font-weight: 800;
+    }
+
+    body.light-mode .mobile-filter-label{
+        color: #fff;
+
+    }
+
+    .mobile-options-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    /* Чипы (варианты) — теперь черные как кнопки фильтров */
+    .mobile-opt-chip {
+        padding: 8px 14px;
+        background: #000;
+        border-radius: 10px;
+        font-size: 14px;
+        cursor: pointer;
+        color: #fff;
+        font-weight: 600;
+        transition: transform 0.1s;
+    }
+
+    body.light-mode .mobile-opt-chip{
+        background: #8f8f8f;
+
+    }
+
+    .mobile-opt-chip:active , body.light-mode .mobile-opt-chip:active{
+        transform: scale(0.95);
+    }
+
+    .mobile-opt-chip.is-active, body.light-mode .mobile-opt-chip.is-active {
+        background: #ff0000; /* Активный — красный */
+        box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+    }
+
+    .mobile-opt-chip input { display: none; }
+
+    @media (max-width: 461px) {
+        .mobile-search-wrapper {
+            margin: 10px 12px; /* Уменьшаем внешние отступы контейнера */
+            padding: 10px;     /* Сжимаем внутреннее пространство */
+            border-radius: 15px;
+        }
+
+        /* Главная строка ввода */
+        .mobile-input-trigger {
+            padding: 8px 12px; /* Было 12px 18px */
+            border-radius: 10px;
+            min-width: 1px;
+        }
+
+        /* Кнопки действий (Reset, Copy, Search) */
+
+
+        /* Сетка рейтинга */
+        .mobile-rating-row {
+            gap: 6px; /* Плотнее друг к другу */
+            margin-bottom: 15px;
+        }
+
+        .mobile-rating-row input {
+            padding: 8px 5px; /* Компактные поля ввода */
+            border-radius: 8px;
+        }
+
+        /* Секции фильтров */
+        .mobile-filter-group {
+            margin-bottom: 12px;
+        }
+
+        .mobile-filter-label {
+            margin-bottom: 6px;
+            font-size: 11px; /* Чуть уменьшим только заглавия для баланса */
+        }
+
+        /* Чипы (кнопки категорий) */
+        .mobile-opt-chip {
+            padding: 5px 10px; /* Было 8px 14px — значительное уменьшение */
+            border-radius: 8px;
+            font-size: 13px; /* Текст почти не трогаем, но чуть-чуть для плотности */
+        }
+
+        .mobile-options-grid {
+            gap: 4px; /* Минимальное расстояние между чипами */
+        }
+
+        .mobile-search-wrapper.is-open .mobile-search-expandable {
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+    }
+}
+
+@media (max-width: 461px) {
+    /* Точечно выбираем только эти кнопки */
+    .icon-btn.mobile-action-btn {
+        flex: 0 0 32px !important;
+        height: 32px !important;
+    }
+
+    /* Уменьшаем иконки внутри них */
+    .icon-btn.mobile-action-btn .icon {
+        width: 15px !important;
+        height: 15px !important;
+    }
+}
+
+@media (max-width: 461px) {
+    /* 1. Сначала разрешаем самой сетке сжиматься */
+    .mobile-rating-row {
+        display: flex; /* Переключаем с grid на flex для более легкого сжатия */
+        gap: 6px;
+        width: 100%;
+    }
+
+    /* 2. Настраиваем инпуты */
+    .mobile-rating-row input {
+        flex: 1;           /* Заставляем их делить место поровну */
+        min-width: 0;      /* КРИТИЧНО: убираем браузерный лимит ширины */
+        width: 100%;       /* Занимает доступное пространство */
+        padding: 8px 5px;  /* Уменьшаем внутренние отступы */
+        font-size: 13px;   /* Немного уменьшаем шрифт для экономии места */
+        height: 34px;      /* Фиксируем высоту для аккуратности */
+    }
+
+    /* 3. Убираем стрелочки (спиннеры), которые мешают сжатию в Chrome/Safari/Edge */
+    .mobile-rating-row input::-webkit-outer-spin-button,
+    .mobile-rating-row input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Для Firefox */
+    .mobile-rating-row input[type=number] {
+        -moz-appearance: textfield;
+    }
 }

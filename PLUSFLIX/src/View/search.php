@@ -23,7 +23,12 @@
             <a href="/admin" class="btn btn-login">Panel Admina</a>
         <?php endif; ?>
 
-        <a href="/favorites" class="btn btn-fav">Ulubione</a>
+        <a href="/favorites" class="btn btn-fav" aria-label="Ulubione">
+            <span class="btn-text">Ulubione</span>
+            <svg class="heart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+        </a>
         <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">🌓</button>
     </div>
 </header>
@@ -47,6 +52,76 @@ $hasAnyFilter =
         ($vMax !== '') ||
         ($sortValue !== 'relevance');
 ?>
+
+<div class="mobile-search-wrapper" id="mobileSearchWrapper">
+    <form method="get" action="search" class="mobile-search-form">
+        <div class="mobile-search-header">
+            <input type="text" name="q" class="mobile-input-trigger" placeholder="Nazwa..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>" readonly>
+
+            <div class="mobile-header-actions">
+                <?php if ($hasAnyFilter): ?>
+                    <a class="icon-btn mobile-action-btn" href="search" aria-label="Wyczyść filtry" title="Wyczyść filtry">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                            <path d="M12 5a7 7 0 1 1-6.32 4H3l3.5-3.5L10 9H7.76A5 5 0 1 0 12 7c1.13 0 2.18.37 3.03 1l1.42-1.42A6.97 6.97 0 0 0 12 5z" fill="currentColor"/>
+                        </svg>
+                    </a>
+
+                    <button class="icon-btn mobile-action-btn" type="button" id="copyLinkBtn" aria-label="Kopiuj link" title="Kopiuj link">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+                            <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                <?php endif; ?>
+
+                <button class="icon-btn mobile-action-btn submit-trigger" type="submit" aria-label="Search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-search-expandable" id="mobileExpandable">
+            <div class="mobile-content-inner">
+
+                <div class="mobile-filter-section">
+                    <div class="mobile-rating-row">
+                        <input type="number" name="min_rating" step="0.1" placeholder="Ocena min" value="<?= htmlspecialchars($vMin) ?>">
+                        <input type="number" name="max_rating" step="0.1" placeholder="Ocena max" value="<?= htmlspecialchars($vMax) ?>">
+                    </div>
+                </div>
+
+                <?php
+                $filters = [
+                        'type' => ['label' => 'Typ', 'options' => ['film' => 'Film', 'series' => 'Serial']],
+                        'category' => ['label' => 'Gatunki', 'options' => array_combine($allCategories ?? [], $allCategories ?? [])],
+                        'platform' => ['label' => 'Platformy', 'options' => array_combine($allPlatforms ?? [], $allPlatforms ?? [])],
+                        'language' => ['label' => 'Języki', 'options' => array_combine($allLanguages ?? [], $allLanguages ?? [])],
+                        'sort' => ['label' => 'Sortowanie', 'options' => ['rating_desc'=>'Ocena malejąco', 'rating_asc'=>'Ocena rosnąco', 'name_asc'=>'A-Z', 'name_desc'=>'Z-A']]
+                ];
+
+                foreach ($filters as $name => $data): ?>
+                    <div class="mobile-filter-group">
+                        <span class="mobile-filter-label"><?= $data['label'] ?></span>
+                        <div class="mobile-options-grid">
+                            <?php foreach ($data['options'] as $val => $text):
+                                $current = $_GET[$name] ?? '';
+                                $isActive = ($current == $val || ($name == 'sort' && $val == 'relevance' && $current == ''));
+                                ?>
+                                <label class="mobile-opt-chip <?= $isActive ? 'is-active' : '' ?>">
+                                    <input type="radio" name="<?= $name ?>" value="<?= $val ?>" <?= $isActive ? 'checked' : '' ?> onchange="this.form.submit()">
+                                    <?= htmlspecialchars($text) ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+            </div>
+        </div>
+    </form>
+</div>
 
 <div class="search-redesign-container">
     <form method="get" action="search" id="searchForm">
@@ -250,6 +325,7 @@ $hasAnyFilter =
         el.addEventListener('change', () => form.submit());
     });
 
+
     // Copy link button (only exists when filters are active)
     (function () {
         const btn = document.getElementById('copyLinkBtn');
@@ -272,6 +348,7 @@ $hasAnyFilter =
             }
         });
     })();
+
 
     // Favorites marker
     function checkFavorites() {
@@ -490,6 +567,37 @@ $hasAnyFilter =
     function closeLoginModal() {
         document.getElementById('loginModal').style.display = 'none';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const wrapper = document.getElementById('mobileSearchWrapper');
+        const trigger = document.querySelector('.mobile-input-trigger');
+
+        if (trigger) {
+            trigger.addEventListener('click', (e) => {
+                // Если панель закрыта, открываем её
+                if (!wrapper.classList.contains('is-open')) {
+                    wrapper.classList.add('is-open');
+                    trigger.removeAttribute('readonly');
+                    trigger.focus();
+                }
+            });
+
+            // Отправка формы при нажатии Enter в поле ввода
+            trigger.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    trigger.form.submit();
+                }
+            });
+        }
+
+        // Авто-отправка для инпутов рейтинга при потере фокуса или изменении
+        const ratingInputs = document.querySelectorAll('.mobile-rating-row input');
+        ratingInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                if (input.value !== "") input.form.submit();
+            });
+        });
+    });
 </script>
 <footer class="pf-footer">
     <div class="pf-footer__inner">
